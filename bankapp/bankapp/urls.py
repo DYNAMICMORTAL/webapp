@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from branches.views import branch_login  # Import the view for branch input
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('customers/', include('customers.urls')),
+    path('', branch_login, name='home'),  # Set branch input page as home
 ]

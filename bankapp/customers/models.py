@@ -21,13 +21,16 @@ class Customer(models.Model):
 
 # ──────────────────────────────── Branches Table ────────────────────────────────
 class Branch(models.Model):
-    branch_id = models.AutoField(primary_key=True)
-    branch_name = models.CharField(max_length=255)
-    ifsc_code = models.CharField(max_length=11, unique=True)
+    BranchID = models.AutoField(primary_key=True)
+    IFSC_Code = models.CharField(max_length=20, unique=True, default="TEMP0000000")
+    BranchName = models.CharField(max_length=255)
     Address = models.TextField()
-    
+    # City = models.CharField(max_length=100)
+    City = models.CharField(max_length=100, default="Unknown")
+    State = models.CharField(max_length=100, default="Unknown")
+
     def __str__(self):
-        return f"{self.branch_name} ({self.ifsc_code})"
+        return f"{self.BranchName} ({self.IFSC_Code})"
 
 # ──────────────────────────────── Accounts Table ────────────────────────────────
 class Account(models.Model):
