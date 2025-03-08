@@ -3,6 +3,71 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Customer
 from .models import Branch
+import logging
+from django.core.cache import cache
+from django.core.mail import send_mail
+from django.conf import settings
+from datetime import datetime, timedelta
+import logging
+logger = logging.getLogger(__name__)
+
+def test_log(request):
+    logger.info("This is a test log message.")
+    return HttpResponse("Check logs!")
+
+
+logger = logging.getLogger('django')
+
+SEARCH_LIMIT = 10  # Maximum allowed searches in TIME_WINDOW
+TIME_WINDOW = 5 * 60  # 5 minutes in seconds
+
+def search_customers(request):
+    if request.method == "GET":
+        employee_id = request.session.get('employee_id', 'Unknown')
+        query = request.GET.get('query', 'N/A')  # Capture search input
+        ip = request.META.get('REMOTE_ADDR')
+
+        logger.info(f"Employee ID: {employee_id} searched for: {query} from IP: {ip}")
+
+        current_time = datetime.now()
+
+        # Cache key for employee search tracking
+        cache_key = f"search_count_{employee_id}"
+
+        # Get current search count
+        search_data = cache.get(cache_key, {"count": 0, "first_search_time": current_time})
+
+        # Check time window
+        if (current_time - search_data["first_search_time"]).seconds > TIME_WINDOW:
+            # Reset the counter if time window has passed
+            search_data = {"count": 1, "first_search_time": current_time}
+        else:
+            # Otherwise, increment the count
+            search_data["count"] += 1
+
+        # Save back to cache
+        cache.set(cache_key, search_data, timeout=TIME_WINDOW)
+
+        # Log the search activity
+        logger.info(f"Employee ID: {employee_id} searched for: {query} from IP: {ip}. Total Searches in 5 min: {search_data['count']}")
+
+        # Trigger alert if search limit is exceeded
+        if search_data["count"] > SEARCH_LIMIT:
+            alert_message = f"🚨 ALERT: Employee ID {employee_id} at IP {ip} has searched for {search_data['count']} customers in 5 minutes! 🚨"
+            
+            # Log alert
+            logger.warning(alert_message)
+
+            # Send email alert to security team
+            send_mail(
+                subject="Insider Threat Alert - Unusual Search Activity",
+                message=alert_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=['mihiramin86@apsit.edu.in'],  # Change this to actual security email
+            )
+
+        # Proceed with your customer search logic
+        return render(request, 'customers/search.html')
 
 def search_customer(request):
     query = request.GET.get('q')
