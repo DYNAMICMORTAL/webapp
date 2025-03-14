@@ -1,4 +1,7 @@
+# webapp/bankapp/branches/middleware.py
 import logging
+import json
+import time
 
 logger = logging.getLogger('django')
 
@@ -7,21 +10,33 @@ class InsiderThreatMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Extract request details
+        start_time = time.time()
         ip = self.get_client_ip(request)
         method = request.method
         url = request.get_full_path()
         user_agent = request.headers.get('User-Agent', 'Unknown')
-        employee_id = request.POST.get('employee_id', 'N/A')  # Capture Employee ID if available
-
-        # Log the details
-        logger.info(f"IP: {ip}, Method: {method}, URL: {url}, User-Agent: {user_agent}, Employee ID: {employee_id}")
+        employee_id = request.session.get('employee_id', request.POST.get('employee_id', 'N/A'))
+        user = request.user.username if request.user.is_authenticated else 'Anonymous'
 
         response = self.get_response(request)
+
+        process_time = time.time() - start_time
+        log_data = {
+            'ip': ip,
+            'method': method,
+            'url': url,
+            'user_agent': user_agent,
+            'employee_id': employee_id,
+            'user': user,
+            'status_code': response.status_code,
+            'process_time': process_time,
+        }
+
+        logger.info(json.dumps(log_data))
+
         return response
 
     def get_client_ip(self, request):
-        """Extracts IP address from the request headers"""
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
             ip = x_forwarded_for.split(',')[0]
