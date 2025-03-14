@@ -9,5 +9,14 @@
             "src": "/(.*)",
             "dest": "bankapp/wsgi.py"
         }
-    ]
+    ],
+    "build": {
+        "env": {
+            "DJANGO_SETTINGS_MODULE": "bankapp.settings"
+        },
+        "commands": [
+            "pip install -r bankapp/requirements.txt",
+            "python bankapp/manage.py migrate"
+        ]
+    }
 }

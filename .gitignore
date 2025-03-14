@@ -19,3 +19,4 @@ staticfiles/
 
 # Ignore environment variables file
 .env
+.vercel
