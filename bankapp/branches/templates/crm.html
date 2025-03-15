@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Experience Portal</title>
+    <script>
+        function loadSubcategories(segmentType) {
+            fetch(`/crm/segmentation/${segmentType}/`)
+                .then(response => response.json())
+                .then(data => {
+                    let subcategoryList = document.getElementById('subcategories');
+                    subcategoryList.innerHTML = ''; // Clear previous options
+                    data.subcategories.forEach(subcategory => {
+                        let btn = document.createElement('button');
+                        btn.innerText = subcategory;
+                        btn.onclick = () => loadSegmentationData(segmentType, subcategory);
+                        subcategoryList.appendChild(btn);
+                    });
+                });
+        }
+
+        function loadSegmentationData(segmentType, subcategory) {
+            fetch(`/customer-experience/segmentation/${segmentType}/${subcategory}/`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultDiv = document.getElementById('results');
+                    resultDiv.innerHTML = `<h3>${data.segment} - ${data.subcategory}</h3>`;
+                    
+                    // Create Table
+                    let table = document.createElement('table');
+                    table.border = '1';
+                    let thead = table.createTHead();
+                    let tbody = table.createTBody();
+
+                    // Create Table Header
+                    let headerRow = thead.insertRow();
+                    Object.keys(data.data[0] || {}).forEach(col => {
+                        let th = document.createElement('th');
+                        th.innerText = col;
+                        headerRow.appendChild(th);
+                    });
+
+                    // Create Table Rows
+                    data.data.forEach(row => {
+                        let tr = tbody.insertRow();
+                        Object.values(row).forEach(value => {
+                            let td = document.createElement('td');
+                            td.innerText = value;
+                            tr.appendChild(td);
+                        });
+                    });
+
+                    resultDiv.appendChild(table);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h2>Customer Segmentation</h2>
+    <ul>
+        {% for segment in segment_types.keys %}
+            <li><button onclick="loadSubcategories('{{ segment }}')">{{ segment }}</button></li>
+        {% endfor %}
+    </ul>
+
+    <div id="subcategories"></div>
+    <div id="results"></div>
+</body>
+</html>
