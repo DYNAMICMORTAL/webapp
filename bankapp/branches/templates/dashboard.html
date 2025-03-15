@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBIShield Dashboard</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between transition-all duration-300">
+            <div>
+                <div class="flex flex-row items-center mb-6 gap-6">
+                    {% load static %}
+                    <img src="{% static 'logo.png' %}" alt="UBIShield Logo" class="w-auto h-12 mb-6">
+                    <h1 class="text-xl font-bold mb-6">UBIShield</h1>
+                </div>
+                <nav>
+                    <ul></ul>
+                        <li><a href="{% url 'dashboard' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" id="dashboard-link">Dashboard</a></li>
+                        {% if user_role == 'compliance' %}
+                            <li><a href="{% url 'fraud_detection' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Fraud Detection</a></li>
+                            <li><a href="{% url 'risk_scoring' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Risk Scoring</a></li>
+                            <li><a href="{% url 'pattern_analysis' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Pattern Analysis</a></li>
+                            <li><a href="{% url 'insider_threat' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Insider Threat</a></li>
+                            <li><a href="{% url 'reports' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Reports</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'mail' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Mailings</a></li>
+                        <li><a href="{% url 'crm' %}" class="block p-3 rounded hover:bg-gray-700 mb-2">Customer Relationship Management</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- Profile and Logout Tabs -->
+            <div>
+                <div class="p-4 bg-gray-800 rounded-lg mb-4 flex items-center">
+                    <div class="w-10 h-10 bg-gray-600 rounded-full mr-3"></div>
+                    <div>
+                        <h2 class="text-lg font-semibold">Admin User</h2>
+                        <p class="text-sm text-gray-400">Administrator</p>
+                    </div>
+                </div>
+                <button class="w-full bg-red-500 p-2 rounded-lg">Logout</button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            {% if user_role == 'compliance' %}
+                <iframe id="content-frame" src="{% url 'compliance_dashboard' %}" class="w-full h-full bg-white p-6 rounded-lg shadow"></iframe>
+            {% else %}
+                <iframe id="content-frame" src="{% url 'dashboard' %}" class="w-full h-full bg-white p-6 rounded-lg shadow"></iframe>
+            {% endif %}
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const links = document.querySelectorAll("nav ul li a");
+            const contentFrame = document.getElementById("content-frame");
+
+            links.forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    contentFrame.src = link.getAttribute("href");
+                    setActiveLink(link);
+                });
+            });
+
+            function setActiveLink(activeLink) {
+                links.forEach(link => link.classList.remove("bg-gray-700"));
+                activeLink.classList.add("bg-gray-700");
+            }
+        });
+    </script>
+</body>
+</html>

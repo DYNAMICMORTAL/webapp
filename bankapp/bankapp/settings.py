@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-5-c3_47j6k1e4m$#r8npdsh!g0&a1+06ktnx0h3u*b9(zbsyzt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
+ALLOWED_HOSTS = []
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Change to your SMTP provider
@@ -57,8 +57,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'branches.middleware.InsiderThreatMiddleware',
+    'branches.middleware.RoleBasedAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'bankapp.urls'

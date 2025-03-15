@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Employee Login</title>
+</head>
+<body>
+    <h2>Login, {{ BranchName }} Branch</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="employee_id" placeholder="Employee ID" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

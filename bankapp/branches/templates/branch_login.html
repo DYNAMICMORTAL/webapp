@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Branch Login</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 5px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h2>Enter Branch Details</h2>
@@ -18,19 +55,76 @@
         <!-- Branch Input Form -->
         <form method="POST">
             {% csrf_token %}
-            <!-- <input type="text" name="branch_number" placeholder="Enter Branch Number" required> -->
             <input type="text" name="IFSC_CODE" placeholder="Enter IFSC Code" required>
             <button type="submit">Submit</button>
         </form>
     {% else %}
-        <!-- Show Employee Login after Branch Validation -->
+        <!-- Show Login Options after Branch Validation -->
         <h2>Login, {{ BranchName }} Branch</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="employee_id" placeholder="Employee ID" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+        <button id="employeeLoginBtn">Bank Employee Login</button>
+        <button id="complianceLoginBtn">Compliance Team Login</button>
     {% endif %}
+
+    <!-- Employee Login Modal -->
+    <div id="employeeLoginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeEmployeeModal">&times;</span>
+            <h2>Bank Employee Login</h2>
+            <form method="POST" action="{% url 'employee_login' %}">
+                {% csrf_token %}
+                <input type="text" name="employee_id" placeholder="Employee ID" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Compliance Login Modal -->
+    <div id="complianceLoginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeComplianceModal">&times;</span>
+            <h2>Compliance Team Login</h2>
+            <form method="POST" action="{% url 'compliance_login' %}">
+                {% csrf_token %}
+                <input type="text" name="employee_id" placeholder="Employee ID" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const employeeLoginBtn = document.getElementById("employeeLoginBtn");
+        const complianceLoginBtn = document.getElementById("complianceLoginBtn");
+        const employeeLoginModal = document.getElementById("employeeLoginModal");
+        const complianceLoginModal = document.getElementById("complianceLoginModal");
+        const closeEmployeeModal = document.getElementById("closeEmployeeModal");
+        const closeComplianceModal = document.getElementById("closeComplianceModal");
+
+        employeeLoginBtn.onclick = function() {
+            employeeLoginModal.style.display = "block";
+        }
+
+        complianceLoginBtn.onclick = function() {
+            complianceLoginModal.style.display = "block";
+        }
+
+        closeEmployeeModal.onclick = function() {
+            employeeLoginModal.style.display = "none";
+        }
+
+        closeComplianceModal.onclick = function() {
+            complianceLoginModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == employeeLoginModal) {
+                employeeLoginModal.style.display = "none";
+            }
+            if (event.target == complianceLoginModal) {
+                complianceLoginModal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

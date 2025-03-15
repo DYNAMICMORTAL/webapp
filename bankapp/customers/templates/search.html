@@ -1,12 +1,332 @@
-<form method="GET">
-    <input type="text" name="q" placeholder="Search Customer...">
-    <button type="submit">Search</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
 
-<ul>
-{% for customer in results %}
-    <li><a href="{% url 'customer_detail' customer.CustomerID %}">{{ customer.FirstName }} {{ customer.LastName }}</a></li>
-{% empty %}
-    <li>No results found.</li>
-{% endfor %}
-</ul>
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            flex-grow: 1;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        li:hover {
+            background-color: #f9f9f9;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        a:hover {
+            color: #007bff;
+        }
+
+        .top-bar {
+            background-color: #e9ecef;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .top-bar {
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .finacle-menu {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: right;
+        }
+
+        .finacle-menu a {
+            text-decoration: none;
+            color: #333;
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .finacle-menu a:hover {
+            background-color: #e0e0e0;
+        }
+
+        .container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 60%;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .modal-content input[type="number"],
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-content #conversionResult {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+        }
+        #current-date {
+            margin-right: 5px;
+        }
+        .currencyForm label {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="finacle-menu">
+        <!-- <a href="#">Show Memo Pad</a> -->
+        <a href="#" id="ccyConverterBtn">CCY Converter</a>
+    </div>
+
+    <div class="top-bar">
+        <h2>Customer Search</h2>
+        <div class="row">
+            <div id="current-date"></div>
+            <h2>| User: ubi</h2>
+        </div>
+    </div>
+    <div class="container">
+        <form method="GET">
+            <input type="text" name="q" placeholder="Search Customer...">
+            <button type="submit">Search</button>
+        </form>
+
+        <ul>
+            {% for customer in results %}
+                <li><a href="{% url 'customer_detail' customer.CustomerID %}">{{ customer.FirstName }} {{ customer.LastName }}</a></li>
+            {% empty %}
+                <li>No results found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="ccyConverterModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Currency Converter</h2>
+            <form id="currencyForm">
+                <label for="amount">Amount: </label>
+                <input type="number" id="amount" name="amount" required>
+
+                <label for="fromCurrency">From: </label>
+                <select id="fromCurrency" name="fromCurrency">
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+
+                <label for="toCurrency">To: </label>
+                <select id="toCurrency" name="toCurrency">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="INR">INR</option>
+                </select>
+
+                <button type="button" onclick="convertCurrency()">Convert</button>
+            </form>
+            <div id="conversionResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("ccyConverterModal");
+        const btn = document.getElementById("ccyConverterBtn");
+        const span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById("amount").value);
+            const fromCurrency = document.getElementById("fromCurrency").value;
+            const toCurrency = document.getElementById("toCurrency").value;
+
+            const apiUrl = `https://api.exchangerate-api.com/v4/latest/${fromCurrency}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.rates && data.rates[toCurrency]) {
+                        const exchangeRate = data.rates[toCurrency];
+                        const convertedAmount = amount * exchangeRate;
+                        document.getElementById("conversionResult").innerHTML = `${amount.toFixed(2)} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+                    } else {
+                        document.getElementById("conversionResult").innerHTML = "Error: Could not fetch exchange rates.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching exchange rates:", error);
+                    document.getElementById("conversionResult").innerHTML = "Error: Could not fetch exchange rates.";
+                });
+        }
+
+        function getCurrentDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return now.toLocaleDateString(undefined, options).replace(/(\d+)\s(\w+)\s(\d+)/, '$1 $2 $3');
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("current-date").innerText = getCurrentDate();
+        });
+    </script>
+</body>
+</html>

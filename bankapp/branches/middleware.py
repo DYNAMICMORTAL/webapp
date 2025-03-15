@@ -2,6 +2,7 @@
 import logging
 import json
 import time
+from django.shortcuts import redirect
 
 logger = logging.getLogger('django')
 
@@ -43,3 +44,14 @@ class InsiderThreatMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+class RoleBasedAccessMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path.startswith('/dashboard') and request.session.get('user_role') not in ['compliance', 'employee']:
+            return redirect('/')
+
+        response = self.get_response(request)
+        return response
