@@ -28,12 +28,14 @@
                             <li><a href="{% url 'insider_threat' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Insider Threat</a></li>
                             <li><a href="{% url 'reports' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Reports</a></li>
                         {% endif %}
-                        <li><a href="{% url 'mail' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Mailings</a></li>
+                        <li><a href="{% url 'mail' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Customer Contact</a></li>
                         <li><a href="{% url 'customer_experience' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Customer Relationship Management</a></li>
+                        <li><a href="{% url 'search_customer' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Customer Search</a></li>
                     </ul>
                 </nav>
             </div>
-            <!-- Profile and Logout Tabs -->
+            <!-- Profile and Log
+             out Tabs -->
             <div>
                 <div class="p-4 bg-gray-800 rounded-lg mb-4 flex items-center">
                     <div class="w-10 h-10 bg-gray-600 rounded-full mr-3"></div>
@@ -52,7 +54,7 @@
         </main>
     </div>
     
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const links = document.querySelectorAll("nav ul li a");

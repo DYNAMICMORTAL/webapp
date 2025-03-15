@@ -150,3 +150,6 @@ def get_segmentation_data(request, segment_type, subcategory):
         data = [dict(zip(columns, row)) for row in cursor.fetchall()]  # Convert result into dictionary
 
     return JsonResponse({"segment": segment_type, "subcategory": subcategory, "data": data})
+
+def customers_page(request):
+    return render(request, 'customers_page.html')

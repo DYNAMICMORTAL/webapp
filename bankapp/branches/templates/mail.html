@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Customers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-6 space-y-6">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold">Email Customers</h1>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mt-4">
+            <div class="flex border-b">
+                <button class="tab-button active" onclick="showTab('segment')">By Segment</button>
+                <button class="tab-button" onclick="showTab('custom')">Custom Selection</button>
+            </div>
+
+            <!-- Tab Content for Segment -->
+            <div id="segment" class="tab-content mt-4">
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="segment-cards">
+                    <!-- Customer Segments will be added here dynamically -->
+                </div>
+
+                <!-- Email Composition Form -->
+                <div class="card mt-6" id="compose-email-segment" style="display: none;">
+                    <div class="card-header">
+                        <h3 class="card-title">Compose Email</h3>
+                        <p class="card-description">Send an email to selected segment</p>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div>
+                            <label for="template" class="block">Email Template</label>
+                            <select id="template" class="select-input">
+                                <option value="">Select a template</option>
+                                <option value="custom">Custom Email</option>
+                                <option value="fraud-alert">Fraud Alert</option>
+                                <option value="security-update">Security Update</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="subject" class="block">Subject</label>
+                            <input id="subject" class="input" placeholder="Email subject">
+                        </div>
+
+                        <div>
+                            <label for="body" class="block">Email Body</label>
+                            <textarea id="body" class="textarea" placeholder="Type your message here" rows="10"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="card-footer flex justify-between">
+                        <button class="btn btn-outline" onclick="cancelEmail()">Cancel</button>
+                        <button class="btn btn-primary" onclick="confirmSendEmail()">Send Email</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content for Custom -->
+            <div id="custom" class="tab-content mt-4 hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Select Customers</h3>
+                        <p class="card-description">Choose specific customers to email</p>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" onclick="selectAllCustomers(this)"></th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Segment</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customer-list">
+                                <!-- Customers will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-footer">
+                        <p class="text-sm">Selected customers: <span id="selected-customers-count">0</span></p>
+                    </div>
+                </div>
+
+                <!-- Email Composition Form -->
+                <div class="card mt-6" id="compose-email-custom" style="display: none;">
+                    <div class="card-header">
+                        <h3 class="card-title">Compose Email</h3>
+                        <p class="card-description">Send an email to selected customers</p>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div>
+                            <label for="template-custom" class="block">Email Template</label>
+                            <select id="template-custom" class="select-input">
+                                <option value="">Select a template</option>
+                                <option value="custom">Custom Email</option>
+                                <option value="fraud-alert">Fraud Alert</option>
+                                <option value="security-update">Security Update</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="subject-custom" class="block">Subject</label>
+                            <input id="subject-custom" class="input" placeholder="Email subject">
+                        </div>
+
+                        <div>
+                            <label for="body-custom" class="block">Email Body</label>
+                            <textarea id="body-custom" class="textarea" placeholder="Type your message here" rows="10"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="card-footer flex justify-between">
+                        <button class="btn btn-outline" onclick="cancelEmail()">Cancel</button>
+                        <button class="btn btn-primary" onclick="confirmSendEmail()">Send Email</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <div id="confirmation-dialog" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg">
+            <h3 class="font-semibold text-xl">Confirm Email Send</h3>
+            <p class="mt-4">You are about to send an email. Do you want to proceed?</p>
+            <div class="mt-4 flex justify-end">
+                <button class="btn btn-outline" onclick="closeDialog()">Cancel</button>
+                <button class="btn btn-danger ml-2" onclick="sendEmail()">Confirm Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const customerSegments = [
+            { id: 1, name: "High-Risk Customers", count: 124 },
+            { id: 2, name: "Fraud Alert Recipients", count: 57 },
+            { id: 3, name: "Insider Threat Affected", count: 18 },
+            { id: 4, name: "Cross-Border Transactions", count: 203 },
+            { id: 5, name: "New Customers", count: 342 },
+            { id: 6, name: "Premium Account Holders", count: 156 },
+        ];
+
+        const customers = [
+            { id: 1, name: "John Smith", email: "john.smith@example.com", segment: "High-Risk", status: "Active" },
+            { id: 2, name: "Sarah Johnson", email: "sarah.j@example.com", segment: "Premium", status: "Active" },
+            { id: 3, name: "Michael Brown", email: "m.brown@example.com", segment: "Fraud Alert", status: "Restricted" },
+            { id: 4, name: "Emma Wilson", email: "emma.w@example.com", segment: "Cross-Border", status: "Active" },
+            { id: 5, name: "James Taylor", email: "j.taylor@example.com", segment: "Insider Threat", status: "Monitoring" },
+            { id: 6, name: "Olivia Davis", email: "o.davis@example.com", segment: "New Customer", status: "Active" },
+            { id: 7, name: "William Martin", email: "w.martin@example.com", segment: "High-Risk", status: "Active" },
+            { id: 8, name: "Sophia Anderson", email: "s.anderson@example.com", segment: "Premium", status: "Active" },
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const segmentCards = document.getElementById("segment-cards");
+            customerSegments.forEach(segment => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.onclick = () => selectSegment(segment.name);
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${segment.name}</h3>
+                        <p class="card-description">${segment.count} customers</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary">Select</button>
+                    </div>
+                `;
+                segmentCards.appendChild(card);
+            });
+
+            const customerList = document.getElementById("customer-list");
+            customers.forEach(customer => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><input type="checkbox" class="customer-checkbox"></td>
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.segment}</td>
+                    <td>${customer.status}</td>
+                `;
+                customerList.appendChild(row);
+            });
+        });
+
+        function showTab(tab) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tabContent => tabContent.classList.add('hidden'));
+            document.getElementById(tab).classList.remove('hidden');
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function selectSegment(segment) {
+            document.getElementById("compose-email-segment").style.display = "block";
+            alert('Selected Segment: ' + segment);
+        }
+
+        function selectAllCustomers(checkbox) {
+            const isChecked = checkbox.checked;
+            const customerCheckboxes = document.querySelectorAll('.customer-checkbox');
+            customerCheckboxes.forEach(chk => chk.checked = isChecked);
+            document.getElementById('selected-customers-count').textContent = isChecked ? customerCheckboxes.length : 0;
+        }
+
+        function confirmSendEmail() {
+            document.getElementById('confirmation-dialog').classList.remove('hidden');
+        }
+
+        function closeDialog() {
+            document.getElementById('confirmation-dialog').classList.add('hidden');
+        }
+
+        function sendEmail() {
+            alert('Email sent!');
+            closeDialog();
+        }
+
+        function cancelEmail() {
+            document.getElementById("compose-email-segment").style.display = "none";
+            document.getElementById("compose-email-custom").style.display = "none";
+        }
+    </script>
+
+    <style>
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .tab-button.active {
+            border-bottom: 2px solid #4F46E5;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .card-footer {
+            text-align: right;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #4F46E5;
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #4F46E5;
+            color: #4F46E5;
+        }
+
+        .btn-danger {
+            background-color: #E11D48;
+            color: white;
+        }
+
+        .input, .select-input, .textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #D1D5DB;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 8px 16px;
+            border: 1px solid #D1D5DB;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #F3F4F6;
+        }
+    </style>
+
+</body>
+
+</html>
