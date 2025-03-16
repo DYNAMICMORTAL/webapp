@@ -7,57 +7,173 @@
     {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'images/logo.ico' %}">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Inter font for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-link.active {
+            @apply bg-blue-500 text-white;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
     <div class="flex h-screen">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between transition-all duration-300">
+        <!-- Enhanced Sidebar -->
+        <aside id="sidebar" class="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between transition-all duration-300 shadow-xl">
             <div>
-                <div class="flex flex-row items-center mb-6 gap-6">
-                    {% load static %}
-                    <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png" alt="UBIShield Logo" class="w-auto h-12 mb-6">
-                    <h1 class="text-xl font-bold mb-6">UBIShield</h1>
+                <div class="flex items-center gap-4 mb-8 px-2">
+                    <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png" 
+                         alt="UBIShield Logo" 
+                         class="w-10 h-10">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                        UBIShield
+                    </h1>
                 </div>
                 <nav>
-                    <ul>
-                        <li><a href="{% url 'compliance_dashboard' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" id="dashboard-link">Dashboard</a></li>
+                    <ul class="space-y-1">
+                        <!-- Dashboard -->
+                        <li><a href="{% url 'compliance_dashboard' %}" 
+                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                              id="dashboard-link">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                            </svg>
+                            Dashboard
+                        </a></li>
+
                         {% if user_role == 'compliance' %}
-                            <li><a href="{% url 'fraud_detection' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Fraud Detection</a></li>
-                            <li><a href="{% url 'risk_scoring' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Risk Scoring</a></li>
-                            <li><a href="{% url 'pattern_analysis' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Pattern Analysis</a></li>
-                            <li><a href="{% url 'insider_threat' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Insider Threat</a></li>
-                            <li><a href="{% url 'reports' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Reports</a></li>
+                        <!-- Fraud Detection -->
+                        <li><a href="{% url 'fraud_detection' %}" 
+                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                              target="content-frame">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            Fraud Detection
+                        </a></li>
+
+                        <!-- Pattern Analysis -->
+                        <li><a href="{% url 'pattern_analysis' %}" 
+                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                              target="content-frame">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Pattern Analysis
+                        </a></li>
+
+                        <!-- Risk Scoring -->
+                        <li><a href="{% url 'risk_scoring' %}" 
+                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                              target="content-frame">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Risk Scoring
+                        </a></li>
+
+                        <!-- Reports -->
+                        <li><a href="{% url 'reports' %}" 
+                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                              target="content-frame">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Reports
+                        </a></li>
+
+                        <!-- Customer Contact -->
+                        <li><a href="{% url 'mail' %}" 
+                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                            target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        Customer Contact
+                        </a></li>
+
+                        <!-- Customer Relationship Management -->
+                        <li><a href="{% url 'customer_experience' %}" 
+                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                            target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Customer Relationship
+                        </a></li>
+
+                        <!-- Customer Search -->
+                        <li><a href="{% url 'search_customer' %}" 
+                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                            target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Customer Search
+                        </a></li>
+
                         {% endif %}
-                        <li><a href="{% url 'mail' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Customer Contact</a></li>
-                        <li><a href="{% url 'customer_experience' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Customer Relationship Management</a></li>
-                        <li><a href="{% url 'search_customer' %}" class="block p-3 rounded hover:bg-gray-700 mb-2" target="content-frame">Customer Search</a></li>
                     </ul>
                 </nav>
             </div>
-            <!-- Profile and Log
-             out Tabs -->
-            <div>
-                <div class="p-4 bg-gray-800 rounded-lg mb-4 flex items-center">
-                    <div class="w-10 h-10 bg-gray-600 rounded-full mr-3"></div>
-                    <div>
-                        <h2 class="text-lg font-semibold">Admin User</h2>
-                        <p class="text-sm text-gray-400">Administrator</p>
+
+            <!-- Enhanced Profile Section -->
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-800 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                                A
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-white">Admin User</h2>
+                            <p class="text-sm text-gray-400">Administrator</p>
+                        </div>
                     </div>
                 </div>
-                <button class="w-full bg-red-500 p-2 rounded-lg">Logout</button>
+                <button class="w-full bg-red-500 p-3 rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Logout
+                </button>
             </div>
         </aside>
-        
-        <!-- Main Content -->
-        <main class="flex-1 p-8">
-            <!-- Loading Spinner -->
-            <div id="loading-spinner" class="hidden fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-                <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+
+        <!-- Enhanced Main Content -->
+        <main class="flex-1 p-8 overflow-hidden">
+            <!-- Improved Loading Spinner -->
+            <div id="loading-spinner" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
+                <div class="relative">
+                    <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+                    <div class="mt-4 text-blue-500 font-medium text-center">Loading...</div>
+                </div>
             </div>
-            <iframe id="content-frame" name="content-frame" src="{% url 'compliance_dashboard' %}" class="w-full h-full bg-white p-6 rounded-lg shadow"></iframe>
+            <iframe id="content-frame" name="content-frame" 
+                    src="{% url 'compliance_dashboard' %}" 
+                    class="w-full h-full bg-white rounded-xl shadow-lg transition-all duration-300"></iframe>
         </main>
     </div>
-    
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -91,6 +207,34 @@
             contentFrame.addEventListener("load", function() {
                 hideLoading();
             });
+        });
+
+        // Enhanced loading animation
+        function showLoading() {
+            loadingSpinner.classList.remove('hidden');
+            loadingSpinner.classList.add('fade-in');
+        }
+
+        function hideLoading() {
+            loadingSpinner.classList.add('hidden');
+            loadingSpinner.classList.remove('fade-in');
+        }
+
+        // Add active state to current link
+        function setActiveLink(activeLink) {
+            links.forEach(link => {
+                link.classList.remove('active', 'bg-blue-500');
+                link.classList.add('hover:bg-gray-800');
+            });
+            activeLink.classList.add('active');
+            activeLink.classList.remove('hover:bg-gray-800');
+        }
+
+        // Set initial active link
+        window.addEventListener('load', () => {
+            const currentPath = window.location.pathname;
+            const activeLink = document.querySelector(`a[href="${currentPath}"]`);
+            if (activeLink) setActiveLink(activeLink);
         });
     </script>
 </body>

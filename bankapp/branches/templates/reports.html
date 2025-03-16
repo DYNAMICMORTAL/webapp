@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6">
+    <div class="mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+        <h1 class="text-2xl font-bold">Audit Logging & Reporting</h1>
+        <p class="text-gray-600">Generate detailed AI-powered fraud analysis reports</p>
+        
+        <div class="mt-4 p-4 border rounded-lg bg-gray-50">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <span>📄</span> Report Generation
+            </h2>
+            <p class="text-sm text-gray-600">Create detailed fraud analysis reports using AI</p>
+            
+            <div class="mt-4 border-b">
+                <button id="input-tab" class="p-2 font-semibold border-b-2 border-blue-500">Input Data</button>
+                <button id="results-tab" class="p-2 text-gray-400">Results</button>
+            </div>
+
+            <div id="input-section" class="mt-4">
+                <div class="p-4 bg-white rounded-lg shadow">
+                    <label class="block text-sm font-medium text-gray-700">Report Type</label>
+                    <select class="w-full mt-2 p-2 border rounded-lg">
+                        <option>Weekly Summary</option>
+                        <option>Monthly Overview</option>
+                        <option>Custom Report</option>
+                    </select>
+                    
+                    <label class="block text-sm font-medium text-gray-700 mt-4">Report Parameters</label>
+                    <textarea class="w-full mt-2 p-2 border rounded-lg" rows="3" placeholder="Specify parameters for the AI to analyze..."></textarea>
+                    
+                    <p class="text-xs text-gray-500 mt-2">Specify the type of report and any specific parameters for the AI to analyze. Be specific about timeframes, fraud types, or regions of interest.</p>
+                    
+                    <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md">Generate Report</button>
+                </div>
+            </div>
+
+            <div id="results-section" class="mt-4 hidden">
+                <div class="bg-white p-4 rounded-lg border">
+                    <h2 class="text-lg font-semibold flex items-center gap-2">
+                        <span>📊</span> Generated Reports
+                    </h2>
+                    <p class="text-sm text-gray-600">View AI-generated fraud analysis reports</p>
+                    
+                    <div class="mt-4 space-y-4">
+                        <div class="border-b pb-4">
+                            <h3 class="text-md font-semibold">Weekly Fraud Detection Summary <span class="text-yellow-600 text-sm">(Pending)</span></h3>
+                            <p class="text-xs text-gray-500">Report ID: r-29384 | Date: 2025-03-16 | Detections: 47 | Total Amount: <strong>$158,245</strong></p>
+                            <p class="text-sm text-gray-600 mt-2">AI analysis identified 47 potential fraud attempts totaling $158,245. Main vectors: card skimming (32%), phishing (28%), identity theft (25%), other (15%).</p>
+                            <a href="#" class="text-blue-500 text-xs mt-2 inline-block">📄 Download Full Report</a>
+                        </div>
+                        
+                        <div class="border-b pb-4">
+                            <h3 class="text-md font-semibold">Emerging Threat: Business Email Compromise <span class="text-blue-600 text-sm">(Investigating)</span></h3>
+                            <p class="text-xs text-gray-500">Report ID: r-29383 | Date: 2025-03-15 | Detections: 8 | Total Amount: <strong>$42,780</strong></p>
+                            <p class="text-sm text-gray-600 mt-2">Increasing sophistication in BEC attacks targeting finance department. AI detected 8 attempts this week, 3 successful before intervention.</p>
+                            <a href="#" class="text-blue-500 text-xs mt-2 inline-block">📄 Download Full Report</a>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-md font-semibold">Suspicious Activity Cluster - North Region <span class="text-green-600 text-sm">(Resolved)</span></h3>
+                            <p class="text-xs text-gray-500">Report ID: r-29382 | Date: 2025-03-14 | Detections: 34 | Total Amount: <strong>$87,650</strong></p>
+                            <p class="text-sm text-gray-600 mt-2">Pattern analysis revealed coordinated attempts across 12 branches in North Region. All transactions blocked by AI safeguards.</p>
+                            <a href="#" class="text-blue-500 text-xs mt-2 inline-block">📄 Download Full Report</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-sm text-gray-400 mt-6">⚡ Powered by UBIShield AI</p>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputTab = document.getElementById('input-tab');
+        const resultsTab = document.getElementById('results-tab');
+        const inputSection = document.getElementById('input-section');
+        const resultsSection = document.getElementById('results-section');
+        const analyzeBtn = document.getElementById('analyze-btn');
+
+        inputTab.addEventListener('click', () => {
+            inputTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
+            inputTab.classList.remove('text-gray-400');
+            resultsTab.classList.remove('border-b-2', 'border-blue-500', 'font-semibold');
+            resultsTab.classList.add('text-gray-400');
+            inputSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+        });
+
+        resultsTab.addEventListener('click', () => {
+            resultsTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
+            resultsTab.classList.remove('text-gray-400');
+            inputTab.classList.remove('border-b-2', 'border-blue-500', 'font-semibold');
+            inputTab.classList.add('text-gray-400');
+            resultsSection.classList.remove('hidden');
+            inputSection.classList.add('hidden');
+        });
+
+        analyzeBtn.addEventListener('click', () => {
+            resultsTab.click();
+        });
+    });
+</script>
+</body>
+</html>
