@@ -1,13 +1,13 @@
 {
     "builds": [{
-        "src": "bankapp/wsgi.py",
+        "src": "webapp/bankapp/wsgi.py",
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "bankapp/wsgi.py"
+            "dest": "webapp/bankapp/wsgi.py"
         }
     ],
     "build": {
@@ -15,8 +15,8 @@
             "DJANGO_SETTINGS_MODULE": "bankapp.settings"
         },
         "commands": [
-            "pip install -r bankapp/requirements.txt",
-            "python bankapp/manage.py migrate"
+            "pip install -r webapp/bankapp/requirements.txt",
+            "python webapp/bankapp/manage.py migrate"
         ]
     }
 }
