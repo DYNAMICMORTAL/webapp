@@ -3,97 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>UBIShield Compliance Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Inter', sans-serif;
         }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-        }
-        .grid {
-            display: grid;
-            gap: 16px;
-        }
-        .grid-4 { grid-template-columns: repeat(4, 1fr); }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: box-shadow 0.3s;
-        }
-        .card:hover {
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .card-icon {
-            padding: 10px;
-            border-radius: 50%;
-        }
-        .text-large {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .text-muted {
-            font-size: 12px;
-            color: gray;
-        }
-        .negative { color: red; }
-        .positive { color: green; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Welcome, User</h1>
-        <p class="text-muted">AI-powered fraud detection dashboard at your service</p>
-        
-        <div class="grid grid-4">
-            <div class="card" onclick="location.href='/dashboard/fraud-detection'">
-                <div class="card-header">
-                    <span class="card-title">Fraud Alerts</span>
-                    <span class="card-icon" style="background: #ffcccc;">&#9888;</span>
-                </div>
-                <div class="text-large">37</div>
-                <p class="text-muted negative">+14% from last week</p>
+<body class="bg-gray-50 min-h-screen p-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header Section -->
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Welcome Back, User</h1>
+                <p class="mt-1 text-sm text-gray-600">AI-powered fraud detection dashboard at your service</p>
             </div>
-            <div class="card" onclick="location.href='/dashboard/risk-scoring'">
-                <div class="card-header">
-                    <span class="card-title">Avg Risk Score</span>
-                    <span class="card-icon" style="background: #cce5ff;">&#128202;</span>
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-600" id="current-date"></span>
+                <div class="h-4 w-px bg-gray-300"></div>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Online
+                    </span>
                 </div>
-                <div class="text-large">72.4</div>
-                <p class="text-muted positive">-3.2 from last month</p>
             </div>
-            <div class="card" onclick="location.href='/dashboard/pattern-analysis'">
-                <div class="card-header">
-                    <span class="card-title">Pattern Anomalies</span>
-                    <span class="card-icon" style="background: #ffebb3;">&#128200;</span>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Fraud Alerts Card -->
+            <div onclick="location.href='/dashboard/fraud-detection'" 
+                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-600">Fraud Alerts</div>
+                    <div class="p-2 bg-red-100 rounded-lg">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="text-large">14</div>
-                <p class="text-muted negative">+3 from yesterday</p>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">37</span>
+                    <span class="text-sm font-medium text-red-600">+14%</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">from last week</p>
             </div>
-            <div class="card" onclick="location.href='/dashboard/insider-threat'">
-                <div class="card-header">
-                    <span class="card-title">Insider Threats</span>
-                    <span class="card-icon" style="background: #e0ccff;">&#9889;</span>
+
+            <!-- Risk Score Card -->
+            <div onclick="location.href='/dashboard/risk-scoring'"
+                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-600">Avg Risk Score</div>
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="text-large">2</div>
-                <p class="text-muted">No change</p>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">72.4</span>
+                    <span class="text-sm font-medium text-green-600">-3.2</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">from last month</p>
+            </div>
+
+            <!-- Pattern Analysis Card -->
+            <div onclick="location.href='/dashboard/pattern-analysis'"
+                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-600">Pattern Anomalies</div>
+                    <div class="p-2 bg-yellow-100 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">14</span>
+                    <span class="text-sm font-medium text-red-600">+3</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">from yesterday</p>
+            </div>
+
+            <!-- Insider Threats Card -->
+            <div onclick="location.href='/dashboard/insider-threat'"
+                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-600">Insider Threats</div>
+                    <div class="p-2 bg-purple-100 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-gray-900">2</span>
+                    <span class="text-sm font-medium text-gray-600">No change</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">from last check</p>
             </div>
         </div>
     </div>
+
+    <script>
+        function getCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return now.toLocaleDateString('en-US', options);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-date').innerText = getCurrentDate();
+        });
+    </script>
 </body>
 </html>

@@ -52,6 +52,17 @@
                         </a></li>
 
                         {% if user_role == 'compliance' %}
+
+                        <li><a href="{% url 'search_customer' %}" 
+                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                            target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Customer Search
+                        </a></li>
+                        
                         <!-- Fraud Detection -->
                         <li><a href="{% url 'fraud_detection' %}" 
                               class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
@@ -119,15 +130,7 @@
                         </a></li>
 
                         <!-- Customer Search -->
-                        <li><a href="{% url 'search_customer' %}" 
-                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                            target="content-frame">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                        Customer Search
-                        </a></li>
+                        
 
                         {% endif %}
                     </ul>

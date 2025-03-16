@@ -1,277 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        form {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
-            flex-grow: 1;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        button[type="submit"] {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.3s ease;
-        }
-
-        li:last-child {
-            border-bottom: none;
-        }
-
-        li:hover {
-            background-color: #f9f9f9;
-        }
-
-        a {
-            text-decoration: none;
-            color: #333;
-        }
-
-        a:hover {
-            color: #007bff;
-        }
-
-        .top-bar {
-            background-color: #e9ecef;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .top-bar h2 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        .top-bar {
-            background-color: #e9ecef;
-            padding: 5px 10px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .top-bar h2 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .finacle-menu {
-            background-color: #f0f0f0;
-            padding: 5px 10px;
-            border-bottom: 1px solid #ddd;
-            text-align: right;
-        }
-
-        .finacle-menu a {
-            text-decoration: none;
-            color: #333;
-            margin-left: 10px;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        .finacle-menu a:hover {
-            background-color: #e0e0e0;
-        }
-
-        .container {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 60%;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-            font-size: 1.5em;
-            color: #333;
-        }
-
-        .modal-content label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-
-        .modal-content input[type="number"],
-        .modal-content select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-right: 10px;
-        }
-
-        .modal-content button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content button:hover {
-            background-color: #0056b3;
-        }
-
-        .modal-content #conversionResult {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .row {
-            display: flex;
-            align-items: center;
-        }
-        #current-date {
-            margin-right: 5px;
-        }
-        .currencyForm label {
-            margin-right: 5px;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body>
-    <div class="finacle-menu">
-        <!-- <a href="#">Show Memo Pad</a> -->
-        <a href="#" id="ccyConverterBtn">CCY Converter</a>
-    </div>
-
-    <div class="top-bar">
-        <h2>Customer Search</h2>
-        <div class="row">
-            <div id="current-date"></div>
-            <h2>| User: ubi</h2>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Navigation Bar -->
+    <div class="bg-white border-b">
+        <div class="flex justify-end px-4 py-2">
+            <button id="ccyConverterBtn" 
+                    class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition duration-150 ease-in-out flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                CCY Converter
+            </button>
         </div>
     </div>
-    <div class="container">
-        <form method="GET">
-            <input type="text" name="q" placeholder="Search Customer...">
-            <button type="submit">Search</button>
-        </form>
 
-        <ul>
-            {% for customer in results %}
-                <li><a href="{% url 'customer_detail' customer.CustomerID %}">{{ customer.FirstName }} {{ customer.LastName }}</a></li>
-            {% empty %}
-                <li>No results found.</li>
-            {% endfor %}
-        </ul>
+    <!-- Header Section -->
+    <div class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Customer Search</h1>
+                <div class="flex items-center gap-3 text-sm text-gray-600">
+                    <span id="current-date"></span>
+                    <span class="text-gray-300">|</span>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span>User: ubi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="ccyConverterModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Currency Converter</h2>
-            <form id="currencyForm">
-                <label for="amount">Amount: </label>
-                <input type="number" id="amount" name="amount" required>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow-sm border">
+            <!-- Search Form -->
+            <div class="p-4 border-b">
+                <form method="GET" class="flex gap-3">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search by name, account number, or phone..." 
+                           class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-150 ease-in-out">
+                    <button type="submit" 
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Search
+                    </button>
+                </form>
+            </div>
 
-                <label for="fromCurrency">From: </label>
-                <select id="fromCurrency" name="fromCurrency">
-                    <option value="INR">INR</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                </select>
+            <!-- Results List -->
+            <div class="divide-y divide-gray-200">
+                {% for customer in results %}
+                <a href="{% url 'customer_detail' customer.CustomerID %}" 
+                   class="block p-4 hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <div class="flex items-center gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="text-blue-600 font-semibold">
+                                    {{ customer.FirstName|first }}{{ customer.LastName|first }}
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">{{ customer.FirstName }} {{ customer.LastName }}</h3>
+                            <p class="text-sm text-gray-500">Account #: {{ customer.CustomerID }}</p>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="p-8 text-center text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No results found</h3>
+                    <p class="mt-1 text-sm text-gray-500">Try adjusting your search terms or filters.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-                <label for="toCurrency">To: </label>
-                <select id="toCurrency" name="toCurrency">
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="INR">INR</option>
-                </select>
+    <!-- Currency Converter Modal -->
+    <div id="ccyConverterModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Currency Converter</h2>
+                    <button class="close text-gray-400 hover:text-gray-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="currencyForm" class="space-y-4">
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                        <input type="number" id="amount" name="amount" required
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
 
-                <button type="button" onclick="convertCurrency()">Convert</button>
-            </form>
-            <div id="conversionResult"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="fromCurrency" class="block text-sm font-medium text-gray-700">From</label>
+                            <select id="fromCurrency" name="fromCurrency"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <option value="INR">INR</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="toCurrency" class="block text-sm font-medium text-gray-700">To</label>
+                            <select id="toCurrency" name="toCurrency"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="INR">INR</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="convertCurrency()"
+                            class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Convert
+                    </button>
+                </form>
+
+                <div id="conversionResult" class="mt-4 p-3 bg-gray-50 rounded-md text-center font-medium text-gray-900"></div>
+            </div>
         </div>
     </div>
 
