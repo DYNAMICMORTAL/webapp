@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UBIShield Dashboard</title>
-    <link rel="icon" href="logo.png" type="image/png">
+    {% load static %}
+    <link rel="icon" type="image/x-icon" href="{% static 'images/logo.ico' %}">
     <script src="https://cdn.tailwindcss.com"></script>
-    
 </head>
 <body class="bg-gray-100 text-gray-900">
     <div class="flex h-screen">
@@ -15,7 +15,7 @@
             <div>
                 <div class="flex flex-row items-center mb-6 gap-6">
                     {% load static %}
-                    <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742112089/UBISHield_Logo_xokpo5.png" alt="UBIShield Logo" class="w-auto h-12 mb-6">
+                    <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png" alt="UBIShield Logo" class="w-auto h-12 mb-6">
                     <h1 class="text-xl font-bold mb-6">UBIShield</h1>
                 </div>
                 <nav>
@@ -50,6 +50,10 @@
         
         <!-- Main Content -->
         <main class="flex-1 p-8">
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="hidden fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+            </div>
             <iframe id="content-frame" name="content-frame" src="{% url 'compliance_dashboard' %}" class="w-full h-full bg-white p-6 rounded-lg shadow"></iframe>
         </main>
     </div>
@@ -59,10 +63,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             const links = document.querySelectorAll("nav ul li a");
             const contentFrame = document.getElementById("content-frame");
+            const loadingSpinner = document.getElementById("loading-spinner");
 
             links.forEach(link => {
                 link.addEventListener("click", function(event) {
                     event.preventDefault();
+                    showLoading();
                     contentFrame.src = link.getAttribute("href");
                     setActiveLink(link);
                 });
@@ -72,6 +78,19 @@
                 links.forEach(link => link.classList.remove("bg-gray-700"));
                 activeLink.classList.add("bg-gray-700");
             }
+
+            function showLoading() {
+                loadingSpinner.classList.remove("hidden");
+            }
+
+            function hideLoading() {
+                loadingSpinner.classList.add("hidden");
+            }
+
+            // Hide loading spinner when iframe content is loaded
+            contentFrame.addEventListener("load", function() {
+                hideLoading();
+            });
         });
     </script>
 </body>
