@@ -1,0 +1,39 @@
+CUSTOMER ONBOARDING DETAILS
+---------------------------
+Customer ID: 20917
+Full Name: Rajesh Kumar Sharma
+Date of Birth: 15-04-1985
+Gender: Male
+Marital Status: Married
+Nationality: Indian
+PAN Number: ABCPS7890D
+Aadhaar Number: 4567 8901 2345
+Mobile Number: +91 9876543210
+Email: rajesh.sharma@example.com
+
+Residential Address:
+Flat No. 403, Sunshine Apartments
+123 MG Road, Bangalore
+Karnataka - 560001
+Residence Type: Rented
+Years at Current Address: 3
+
+Employment Details:
+Occupation: Software Engineer
+Employer: TechSolutions Pvt Ltd
+Annual Income: ₹1,500,000
+Years with Current Employer: 5
+
+Banking Details:
+Account Type: Savings
+Account Opening Date: 10-01-2020
+Initial Deposit: ₹25,000
+Source of Funds: Salary
+Purpose of Account: Personal Banking
+
+Additional Information:
+Politically Exposed Person: No
+Related to PEP: No
+Tax Residency: India Only
+Foreign Travel History: Limited (2 countries in last 3 years)
+Previous Banking Relationships: Yes (HDFC Bank, 8 years)
