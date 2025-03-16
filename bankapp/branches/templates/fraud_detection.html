@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="">
+    <div class=" mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+        <h1 class="text-3xl font-bold">Fraud Detection</h1>
+        <p class="text-gray-600">Upload transaction logs for AI-powered fraud analysis</p>
+        
+        <div class="mt-6 border rounded-lg p-4 bg-gray-50">
+            <h2 class="text-xl font-semibold flex items-center">
+                <span class="mr-2">🔍</span> Transaction Analysis
+            </h2>
+            <p class="text-gray-500">Upload transaction logs to identify potential fraud patterns</p>
+            
+            <div class="mt-4 border-b">
+                <button id="input-tab" class="p-2 font-semibold border-b-2 border-blue-500">Input Data</button>
+                <button id="results-tab" class="p-2 text-gray-400">Results</button>
+            </div>
+            
+            <div id="input-section" class="mt-4">
+                <label for="transaction-logs" class="block font-semibold">Transaction Logs</label>
+                <textarea id="transaction-logs" class="w-full h-32 p-3 border rounded bg-gray-100 text-gray-800">
+ACME Bank Transaction Logs - March 18, 2023
+tx-293847, a-12345, $4950.00, withdrawal, 43.125.212.45
+tx-293848, a-12345, $5000.00, deposit, mobile-app
+tx-293849, a-12345, $349.99, transfer, web-application
+                </textarea>
+                <p class="text-sm text-gray-500 mt-2">Format: transaction-id, account-id, amount, type, location</p>
+                <button id="analyze-btn" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Analyze</button>
+            </div>
+
+            <div id="results-section" class="mt-4 hidden">
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h3 class="text-lg font-semibold text-yellow-800">Potential Fraud Detected</h3>
+                    <ul class="mt-2 space-y-2">
+                        <li class="flex items-center text-yellow-700">
+                            <span class="mr-2">⚠️</span> Multiple large transactions in short time span
+                        </li>
+                        <li class="flex items-center text-yellow-700">
+                            <span class="mr-2">⚠️</span> Unusual IP address location
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-sm text-gray-400 mt-6">⚡ Powered by UBIShield AI</p>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputTab = document.getElementById('input-tab');
+        const resultsTab = document.getElementById('results-tab');
+        const inputSection = document.getElementById('input-section');
+        const resultsSection = document.getElementById('results-section');
+        const analyzeBtn = document.getElementById('analyze-btn');
+
+        inputTab.addEventListener('click', () => {
+            inputTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
+            inputTab.classList.remove('text-gray-400');
+            resultsTab.classList.remove('border-b-2', 'border-blue-500', 'font-semibold');
+            resultsTab.classList.add('text-gray-400');
+            inputSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+        });
+
+        resultsTab.addEventListener('click', () => {
+            resultsTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
+            resultsTab.classList.remove('text-gray-400');
+            inputTab.classList.remove('border-b-2', 'border-blue-500', 'font-semibold');
+            inputTab.classList.add('text-gray-400');
+            resultsSection.classList.remove('hidden');
+            inputSection.classList.add('hidden');
+        });
+
+        analyzeBtn.addEventListener('click', () => {
+            resultsTab.click();
+        });
+    });
+</script>
+</body>
+</html>
