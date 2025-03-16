@@ -13,11 +13,6 @@
     "build": {
         "env": {
             "DJANGO_SETTINGS_MODULE": "bankapp.settings"
-        },
-        "commands": [
-            "apt-get update && apt-get install -y default-libmysqlclient-dev",
-            "pip install -r webapp/bankapp/requirements.txt",
-            "python webapp/bankapp/manage.py migrate"
-        ]
+        }
     }
 }
