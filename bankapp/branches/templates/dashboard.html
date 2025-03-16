@@ -95,7 +95,17 @@
                             </svg>
                             Risk Scoring
                         </a></li>
-
+                        <!-- Insider Threat -->
+                        <li><a href="{% url 'insider_threat' %}" 
+                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                            target="content-frame">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zm0 0v-4m0 4l-4-4m4 4l4-4M9 3.8c.7-.4 1.5-.6 2.3-.7m3.4.7c-.7-.4-1.5-.6-2.3-.7"/>
+                            </svg>
+                            Insider Threat
+                        </a></li>
+                        
                         <!-- Reports -->
                         <li><a href="{% url 'reports' %}" 
                               class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
@@ -129,7 +139,6 @@
                         Customer Relationship
                         </a></li>
 
-                        <!-- Customer Search -->
                         
 
                         {% endif %}
@@ -210,34 +219,62 @@
             contentFrame.addEventListener("load", function() {
                 hideLoading();
             });
-        });
 
-        // Enhanced loading animation
-        function showLoading() {
-            loadingSpinner.classList.remove('hidden');
-            loadingSpinner.classList.add('fade-in');
-        }
+            // Enhanced loading animation
+            function showLoading() {
+                loadingSpinner.classList.remove('hidden');
+                loadingSpinner.classList.add('fade-in');
+            }
 
-        function hideLoading() {
-            loadingSpinner.classList.add('hidden');
-            loadingSpinner.classList.remove('fade-in');
-        }
+            function hideLoading() {
+                loadingSpinner.classList.add('hidden');
+                loadingSpinner.classList.remove('fade-in');
+            }
 
-        // Add active state to current link
-        function setActiveLink(activeLink) {
-            links.forEach(link => {
-                link.classList.remove('active', 'bg-blue-500');
-                link.classList.add('hover:bg-gray-800');
+            // Add active state to current link
+            function setActiveLink(activeLink) {
+                links.forEach(link => {
+                    link.classList.remove('active', 'bg-blue-500');
+                    link.classList.add('hover:bg-gray-800');
+                });
+                activeLink.classList.add('active');
+                activeLink.classList.remove('hover:bg-gray-800');
+            }
+
+            // Set initial active link
+            window.addEventListener('load', () => {
+                const currentPath = window.location.pathname;
+                const activeLink = document.querySelector(`a[href="${currentPath}"]`);
+                if (activeLink) setActiveLink(activeLink);
             });
-            activeLink.classList.add('active');
-            activeLink.classList.remove('hover:bg-gray-800');
-        }
 
-        // Set initial active link
-        window.addEventListener('load', () => {
-            const currentPath = window.location.pathname;
-            const activeLink = document.querySelector(`a[href="${currentPath}"]`);
-            if (activeLink) setActiveLink(activeLink);
+            // Set dashboard as active by default
+            const dashboardLink = document.getElementById("dashboard-link");
+            setActiveLink(dashboardLink);
+            dashboardLink.classList.add('bg-blue-500', 'text-white');
+            dashboardLink.classList.remove('hover:bg-gray-800');
+
+            // Modify the existing setActiveLink function
+            function setActiveLink(activeLink) {
+                links.forEach(link => {
+                    link.classList.remove('active', 'bg-blue-500', 'text-white');
+                    link.classList.add('hover:bg-gray-800');
+                });
+                activeLink.classList.add('active', 'bg-blue-500', 'text-white');
+                activeLink.classList.remove('hover:bg-gray-800');
+            }
+
+            // Modify the window load event
+            window.addEventListener('load', () => {
+                const currentPath = window.location.pathname;
+                const activeLink = document.querySelector(`a[href="${currentPath}"]`);
+                if (activeLink) {
+                    setActiveLink(activeLink);
+                } else {
+                    // If no active link found, default to dashboard
+                    setActiveLink(dashboardLink);
+                }
+            });
         });
     </script>
 </body>

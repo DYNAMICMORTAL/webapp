@@ -34,7 +34,7 @@
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Fraud Alerts Card -->
-            <div onclick="location.href='/dashboard/fraud-detection'" 
+            <div onclick="location.href='{% url 'fraud_detection' %}'" 
                  class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Fraud Alerts</div>
@@ -52,7 +52,7 @@
             </div>
 
             <!-- Risk Score Card -->
-            <div onclick="location.href='/dashboard/risk-scoring'"
+            <div onclick="location.href='{% url 'risk_scoring' %}'"
                  class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Avg Risk Score</div>
@@ -70,7 +70,7 @@
             </div>
 
             <!-- Pattern Analysis Card -->
-            <div onclick="location.href='/dashboard/pattern-analysis'"
+            <div onclick="location.href='{% url 'pattern_analysis' %}'"
                  class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Pattern Anomalies</div>

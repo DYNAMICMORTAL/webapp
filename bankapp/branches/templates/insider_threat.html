@@ -8,28 +8,26 @@
 </head>
 <body class="p-6">
     <div class=" mx-auto mt-10 p-6 bg-white rounded-lg shadow">
-        <h1 class="text-2xl font-bold">Pattern Analysis</h1>
-        <p class="text-gray-600">AI-powered transaction pattern analysis</p>
+        <h1 class="text-2xl font-bold">Insider Threat Monitoring</h1>
+        <p class="text-gray-600">Detect unusual employee activities that may indicate security risks</p>
         
         <div class="mt-4 p-4 border rounded-lg bg-gray-50">
             <h2 class="text-lg font-semibold flex items-center gap-2">
-                <span>📊</span> Transaction Pattern Analysis
+                <span>⚠️</span> Employee Activity Analysis
             </h2>
-            <p class="text-sm text-gray-600">Analyze customer transaction patterns for unusual behavior</p>
+            <p class="text-sm text-gray-600">Monitor employee access patterns for potential insider threats</p>
             
-            <div class="mt-4 border-b">
-                <button id="input-tab" class="p-2 font-semibold border-b-2 border-blue-500">Input Data</button>
-                <button id="results-tab" class="p-2 text-gray-400">Results</button>
+            <div class="mt-4 flex border-b">
+                <button class="py-2 px-4 flex-1 border-b-2 border-blue-500 font-medium">Input Data</button>
+                <button class="py-2 px-4 flex-1 text-gray-500">Results</button>
             </div>
-
-            <div id="input-section" class="mt-4">
-                <div class="mt-4">
-                    <label class="text-sm font-medium">Employee ID</label>
-                    <input type="text" value="emp-73921" class="w-full p-2 border rounded-md text-sm bg-gray-100">
-                    
-                </div>
+            
+            <div class="mt-4 p-4 bg-white rounded-lg shadow">
+                <label class="block text-sm font-medium text-gray-700">Employee ID</label>
+                <input type="text" id="employeeID" class="w-full mt-2 p-2 border rounded-lg" placeholder="emp-XXXXX">
                 
-                <p class="text-xs text-gray-500 mt-2">Enter an employee ID to monitor for unusual activities that may indicate insider threats.<br>The AI analyzes access patterns, data transfers, and authentication events.</p>
+                <p class="text-xs text-gray-500 mt-2">Enter an employee ID to monitor for unusual activities that may indicate insider threats.<br>
+                The AI analyzes access patterns, data transfers, and authentication events.</p>
                 
                 <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md">Analyze</button>
             </div>

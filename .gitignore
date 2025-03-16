@@ -21,3 +21,4 @@ staticfiles/
 .env
 .vercel
 
+bankapp/bank_security.log
