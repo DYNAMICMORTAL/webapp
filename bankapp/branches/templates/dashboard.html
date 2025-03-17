@@ -30,14 +30,37 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        /* Custom Scrollbar Styles */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
     <div class="flex h-screen">
         <!-- Enhanced Sidebar -->
-        <aside id="sidebar" class="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between transition-all duration-300 shadow-xl">
-            <div>
-                <div class="flex items-center gap-4 mb-8 px-2">
+        <aside id="sidebar" class="w-64 bg-gray-900 text-white flex flex-col h-screen">
+            <!-- Fixed Header Section -->
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-2 px-2">
                     <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png" 
                          alt="UBIShield Logo" 
                          class="w-10 h-10">
@@ -45,123 +68,125 @@
                         UBIShield
                     </h1>
                 </div>
-                <nav>
-                    <ul class="space-y-1">
-                        <!-- Dashboard -->
-                        <li><a href="{% url 'compliance_dashboard' %}" 
-                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                              id="dashboard-link">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                            </svg>
-                            Dashboard
-                        </a></li>
-
-                        <li><a href="{% url 'search_customer' %}" 
-                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                            target="content-frame">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                        Customer Search
-                        </a></li>
-
-                        <!-- Transactions -->
-                        <li><a href="{% url 'transactions' %}" 
-                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                              target="content-frame">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                            </svg>
-                            Transactions
-                        </a></li>
-
-                        {% if user_role == 'compliance' %}
-                        <!-- Fraud Detection -->
-                        <li><a href="{% url 'fraud_detection' %}" 
-                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                              target="content-frame">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
-                            Fraud Detection
-                        </a></li>
-
-                        <!-- Pattern Analysis -->
-                        <li><a href="{% url 'pattern_analysis' %}" 
-                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                              target="content-frame">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            Pattern Analysis
-                        </a></li>
-
-                        <!-- Risk Scoring -->
-                        <li><a href="{% url 'risk_scoring' %}" 
-                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                              target="content-frame">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            Risk Scoring
-                        </a></li>
-                        <!-- Insider Threat -->
-                        <li><a href="{% url 'insider_threat' %}" 
-                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                            target="content-frame">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zm0 0v-4m0 4l-4-4m4 4l4-4M9 3.8c.7-.4 1.5-.6 2.3-.7m3.4.7c-.7-.4-1.5-.6-2.3-.7"/>
-                            </svg>
-                            Insider Threat
-                        </a></li>
-                        
-                        <!-- Reports -->
-                        <li><a href="{% url 'reports' %}" 
-                              class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                              target="content-frame">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            Reports
-                        </a></li>
-                        {% endif %}
-                        <!-- Customer Contact -->
-                        <li><a href="{% url 'mail' %}" 
-                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                            target="content-frame">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                        Customer Contact
-                        </a></li>
-
-                        <!-- Customer Relationship Management -->
-                        <li><a href="{% url 'customer_experience' %}" 
-                            class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
-                            target="content-frame">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        Customer Relationship
-                        </a></li>
-                       
-                    </ul>
-                </nav>
             </div>
 
-            <!-- Enhanced Profile Section -->
-            <div class="space-y-4">
+            <!-- Scrollable Navigation Section with custom scrollbar -->
+            <nav class="flex-1 overflow-y-auto px-6 custom-scrollbar">
+                <ul class="space-y-1">
+                    <!-- Dashboard -->
+                    <li><a href="{% url 'compliance_dashboard' %}" 
+                          class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                          id="dashboard-link">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                        </svg>
+                        Dashboard
+                    </a></li>
+
+                    <li><a href="{% url 'search_customer' %}" 
+                        class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                        target="content-frame">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Customer Search
+                    </a></li>
+
+                    <!-- Transactions -->
+                    <li><a href="{% url 'transactions' %}" 
+                          class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                          target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                        Transactions
+                    </a></li>
+
+                    {% if user_role == 'compliance' %}
+                    <!-- Fraud Detection -->
+                    <li><a href="{% url 'fraud_detection' %}" 
+                          class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                          target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        Fraud Detection
+                    </a></li>
+
+                    <!-- Pattern Analysis -->
+                    <li><a href="{% url 'pattern_analysis' %}" 
+                          class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                          target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Pattern Analysis
+                    </a></li>
+
+                    <!-- Risk Scoring -->
+                    <li><a href="{% url 'risk_scoring' %}" 
+                          class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                          target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Risk Scoring
+                    </a></li>
+                    <!-- Insider Threat -->
+                    <li><a href="{% url 'insider_threat' %}" 
+                        class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                        target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zm0 0v-4m0 4l-4-4m4 4l4-4M9 3.8c.7-.4 1.5-.6 2.3-.7m3.4.7c-.7-.4-1.5-.6-2.3-.7"/>
+                        </svg>
+                        Insider Threat
+                    </a></li>
+                    
+                    <!-- Reports -->
+                    <li><a href="{% url 'reports' %}" 
+                          class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                          target="content-frame">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Reports
+                    </a></li>
+                    {% endif %}
+                    <!-- Customer Contact -->
+                    <li><a href="{% url 'mail' %}" 
+                        class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                        target="content-frame">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    Customer Contact
+                    </a></li>
+
+                    <!-- Customer Relationship Management -->
+                    <li><a href="{% url 'customer_experience' %}" 
+                        class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
+                        target="content-frame">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    Customer Relationship
+                    </a></li>
+                   
+                </ul>
+            </nav>
+
+            <!-- Fixed Profile and Logout Section -->
+            <div class="p-6 space-y-4 border-t border-gray-800">
                 <div class="p-4 bg-gray-800 rounded-lg">
                     <div class="flex items-center gap-3">
                         <div class="relative">
