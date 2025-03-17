@@ -24,13 +24,20 @@
 
             <div id="input-section" class="mt-4">
                 <div class="mt-4">
-                    <label class="text-sm font-medium">Customer ID</label>
-                    <input type="text" value="cust-123456" class="w-full p-2 border rounded-md text-sm bg-gray-100">
+                    <label for="customer-id" class="text-sm font-medium">Customer ID</label>
+                    <input type="text" id="customer-id" value="20917" class="w-full p-2 border rounded-md text-sm bg-gray-100">
                 </div>
                 
                 <p class="text-xs text-gray-500 mt-2">Enter a customer ID to generate a comprehensive fraud risk assessment.<br>The AI will analyze recent transactions, account behavior, and known fraud patterns.</p>
                 
                 <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md">Analyze</button>
+                
+                <div id="loading" class="hidden mt-4 flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                    <span class="ml-2 text-sm">Analyzing risk profile...</span>
+                </div>
+                
+                <div id="error-message" class="hidden mt-4 p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
             </div>
 
             <div id="results-section" class="mt-4 hidden">
@@ -38,22 +45,38 @@
                     <h3 class="text-lg font-semibold text-yellow-800">Risk Assessment Results</h3>
                     <div class="mt-4 space-y-4">
                         <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium">Customer ID</span>
+                            <span id="result-customer-id" class="font-bold">-</span>
+                        </div>
+                        <div class="flex items-center justify-between">
                             <span class="text-sm font-medium">Overall Risk Score</span>
-                            <span class="text-red-600 font-bold">High (8.5/10)</span>
+                            <span id="result-risk-score" class="font-bold">-</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium">Risk Category</span>
+                            <span id="result-risk-category" class="font-bold">-</span>
                         </div>
                         <div class="space-y-2">
                             <h4 class="font-medium">Risk Factors:</h4>
-                            <ul class="text-sm space-y-1">
-                                <li class="flex items-center text-yellow-700">
-                                    <span class="mr-2">⚠️</span> Unusual transaction patterns detected
-                                </li>
-                                <li class="flex items-center text-yellow-700">
-                                    <span class="mr-2">⚠️</span> Multiple high-value transactions
-                                </li>
-                                <li class="flex items-center text-yellow-700">
-                                    <span class="mr-2">⚠️</span> Account accessed from multiple locations
-                                </li>
+                            <ul id="result-risk-factors" class="text-sm space-y-1">
+                                <!-- Risk factors will be inserted here -->
                             </ul>
+                        </div>
+                        <div class="mt-4 space-y-2">
+                            <h4 class="font-medium">Explanation:</h4>
+                            <p id="result-explanation" class="text-sm text-gray-700 bg-white p-3 rounded-md">
+                                <!-- Explanation will be inserted here -->
+                            </p>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div class="bg-white p-3 rounded-md border">
+                                <div class="text-sm font-medium">Total Transactions</div>
+                                <div id="result-total-transactions" class="text-lg font-bold">-</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-md border">
+                                <div class="text-sm font-medium">Risky Transactions</div>
+                                <div id="result-risky-transactions" class="text-lg font-bold">-</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,6 +93,20 @@
         const inputSection = document.getElementById('input-section');
         const resultsSection = document.getElementById('results-section');
         const analyzeBtn = document.getElementById('analyze-btn');
+        const loadingElement = document.getElementById('loading');
+        const errorMessage = document.getElementById('error-message');
+        
+        // Form elements
+        const customerIdInput = document.getElementById('customer-id');
+        
+        // Result elements
+        const resultCustomerId = document.getElementById('result-customer-id');
+        const resultRiskScore = document.getElementById('result-risk-score');
+        const resultRiskCategory = document.getElementById('result-risk-category');
+        const resultRiskFactors = document.getElementById('result-risk-factors');
+        const resultExplanation = document.getElementById('result-explanation');
+        const resultTotalTransactions = document.getElementById('result-total-transactions');
+        const resultRiskyTransactions = document.getElementById('result-risky-transactions');
 
         inputTab.addEventListener('click', () => {
             inputTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
@@ -89,9 +126,103 @@
             inputSection.classList.add('hidden');
         });
 
-        analyzeBtn.addEventListener('click', () => {
-            resultsTab.click();
+        analyzeBtn.addEventListener('click', async () => {
+            // Get customer ID
+            const customerId = customerIdInput.value.trim();
+            
+            if (!customerId) {
+                showError('Please enter a customer ID');
+                return;
+            }
+            
+            // Show loading indicator
+            loadingElement.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            
+            try {
+                // Call risk assessment API
+                const response = await fetch('/api/risk-assessment/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customer_id: customerId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Request failed with status ${response.status}`);
+                }
+                
+                // Update results
+                resultCustomerId.textContent = data.customer_id;
+                
+                // Format risk score with color coding
+                const riskScore = data.risk_score;
+                resultRiskScore.textContent = `${riskScore}/100`;
+                
+                if (riskScore >= 75) {
+                    resultRiskScore.className = 'font-bold text-red-600';
+                } else if (riskScore >= 50) {
+                    resultRiskScore.className = 'font-bold text-orange-500';
+                } else if (riskScore >= 25) {
+                    resultRiskScore.className = 'font-bold text-yellow-600';
+                } else {
+                    resultRiskScore.className = 'font-bold text-green-600';
+                }
+                
+                // Set risk category with color coding
+                const riskCategory = data.risk_category;
+                resultRiskCategory.textContent = riskCategory;
+                
+                if (riskCategory === 'High' || riskCategory === 'Very High') {
+                    resultRiskCategory.className = 'font-bold text-red-600';
+                } else if (riskCategory === 'Medium') {
+                    resultRiskCategory.className = 'font-bold text-orange-500';
+                } else {
+                    resultRiskCategory.className = 'font-bold text-green-600';
+                }
+                
+                // Set risk factors
+                resultRiskFactors.innerHTML = '';
+                if (data.risk_factors && data.risk_factors.length > 0) {
+                    data.risk_factors.forEach(factor => {
+                        const li = document.createElement('li');
+                        li.classList.add('flex', 'items-center', 'text-yellow-700');
+                        li.innerHTML = `<span class="mr-2">⚠️</span> ${factor}`;
+                        resultRiskFactors.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = 'No specific risk factors identified';
+                    resultRiskFactors.appendChild(li);
+                }
+                
+                // Set explanation
+                resultExplanation.textContent = data.explanation || 'No detailed explanation available';
+                
+                // Set transaction counts
+                resultTotalTransactions.textContent = data.total_transactions || '0';
+                resultRiskyTransactions.textContent = data.risky_transactions || '0';
+                
+                // Switch to results tab
+                resultsTab.click();
+                
+            } catch (error) {
+                showError(error.message || 'Error processing risk assessment');
+            } finally {
+                // Hide loading indicator
+                loadingElement.classList.add('hidden');
+            }
         });
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
     });
 </script>
 </body>

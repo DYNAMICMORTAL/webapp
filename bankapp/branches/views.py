@@ -13,6 +13,20 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .transaction_chat import TransactionChatAssistant
 
+# Import risk profiling modules
+try:
+    from .risk_profiling.agents.risk_assessment_agent import RiskAssessmentAgent
+    from .risk_profiling.agents.kyc_agent import KYCAgent
+    from .risk_profiling.utils.data_processor import load_sample_data
+except ImportError:
+    # Fallback imports if the relative import fails
+    import sys
+    import os
+    sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'branches', 'risk_profiling'))
+    from agents.risk_assessment_agent import RiskAssessmentAgent
+    from agents.kyc_agent import KYCAgent
+    from utils.data_processor import load_sample_data
+
 def branch_login(request):
     BranchName = None
     if request.method == "POST":
@@ -76,6 +90,9 @@ def fraud_detection(request):
     return render(request, 'fraud_detection.html')
 
 def risk_scoring(request):
+    """
+    Render the risk scoring template
+    """
     return render(request, 'risk_scoring.html')
 
 def pattern_analysis(request):
@@ -320,3 +337,121 @@ def transaction_chat(request):
     except Exception as e:
         print(f"Unexpected error in transaction_chat: {str(e)}")
         return JsonResponse({'error': f'Error processing request: {str(e)}'}, status=500)
+
+@csrf_exempt
+@require_POST
+def risk_assessment_api(request):
+    """
+    API endpoint to process risk assessment for a customer
+    """
+    try:
+        # Parse request data
+        data = json.loads(request.body)
+        customer_id = data.get('customer_id')
+        
+        if not customer_id:
+            return JsonResponse({'error': 'Customer ID is required'}, status=400)
+        
+        # Initialize risk assessment agents
+        risk_agent = RiskAssessmentAgent()
+        kyc_agent = KYCAgent()
+        
+        # Get customer transaction data
+        # Try multiple possible paths for the transaction data file
+        possible_paths = [
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+                       'branches', 'risk_profiling', 'final_synthetic_transactions.csv'),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                       'risk_profiling', 'final_synthetic_transactions.csv'),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                       'data', 'final_synthetic_transactions.csv')
+        ]
+        
+        transactions_file = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                transactions_file = path
+                break
+        
+        if not transactions_file:
+            return JsonResponse({
+                'error': 'Transaction data file not found. Tried: ' + ', '.join(possible_paths)
+            }, status=500)
+        
+        # Load and filter transaction data
+        transactions_df = pd.read_csv(transactions_file)
+        
+        # Try to match on customer_account_number
+        customer_transactions = transactions_df[transactions_df['customer_account_number'] == int(customer_id)]
+        
+        # If no results, try matching on customer_id
+        if len(customer_transactions) == 0:
+            customer_transactions = transactions_df[transactions_df['customer_id'] == int(customer_id)]
+        
+        if len(customer_transactions) == 0:
+            return JsonResponse({
+                'error': f'No transaction data found for customer ID {customer_id}'
+            }, status=404)
+            
+        # Get the most recent transaction 
+        latest_transaction = customer_transactions.iloc[-1]
+        
+        # Convert to dictionary
+        if hasattr(latest_transaction, 'to_dict'):
+            transaction_dict = latest_transaction.to_dict()
+        else:
+            # If it's already a dictionary, use it directly
+            transaction_dict = latest_transaction
+        
+        # Print out transaction data for debugging
+        print(f"Transaction data: {json.dumps(transaction_dict, default=str)[:200]}...")
+        
+        # Process KYC profile assessment
+        try:
+            profile_assessment = kyc_agent.analyze_customer_profile(customer_id)
+            print(f"Profile assessment completed: {profile_assessment is not None}")
+        except Exception as e:
+            print(f"Error in KYC profile assessment: {str(e)}")
+            profile_assessment = {"profile_risk": {"risk_score": 50}}
+        
+        # Process transaction risk assessment
+        try:
+            # Make sure we're passing a dict, not a pandas Series
+            transaction_assessment = risk_agent.assess_risk(transaction_dict)
+            print(f"Transaction assessment completed: {transaction_assessment is not None}")
+        except Exception as e:
+            print(f"Error in transaction risk assessment: {str(e)}")
+            transaction_assessment = {"risk_score": 50, "risk_category": "Medium", "risk_factors": ["Unable to process detailed risk factors"]}
+        
+        # Calculate combined risk (profile + transaction)
+        try:
+            combined_risk = risk_agent.assess_combined_risk(profile_assessment.get('profile_risk', {}), transaction_assessment)
+        except Exception as e:
+            print(f"Error in combined risk calculation: {str(e)}")
+            # Use transaction assessment as fallback
+            combined_risk = transaction_assessment
+        
+        # Prepare risk factors for display
+        risk_factors = []
+        if combined_risk and 'risk_factors' in combined_risk:
+            risk_factors = combined_risk['risk_factors']
+        
+        # Format response for UI
+        response = {
+            'success': True,
+            'customer_id': customer_id,
+            'risk_score': combined_risk.get('risk_score', 0),
+            'risk_category': combined_risk.get('risk_category', 'Unknown'),
+            'risk_factors': risk_factors,
+            'explanation': combined_risk.get('explanation', 'No detailed explanation available'),
+            'total_transactions': len(customer_transactions),
+            'risky_transactions': len(customer_transactions[customer_transactions['label_for_fraud'] == 1])
+        }
+        
+        return JsonResponse(response)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON in request'}, status=400)
+    except Exception as e:
+        print(f"Error in risk_assessment_api: {str(e)}")
+        return JsonResponse({'error': f'Error processing risk assessment: {str(e)}'}, status=500)

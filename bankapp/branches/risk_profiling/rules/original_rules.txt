@@ -1,0 +1,9 @@
+[Archived] This is for reference
+
+Rule 1: If transaction_amount > 50000, add risk score 70, category "High", factor "Unusually large transaction amount"
+Rule 2: If smurfing_indicator == 1, add risk score 80, category "High", factor "Potential structuring/smurfing behavior detected"
+Rule 3: If previous_fraud_flag == 1, add risk score 90, category "Very High", factor "Account previously involved in fraudulent activity"
+Rule 4: If account_age_days < 30, add risk score 60, category "Medium", factor "Account is relatively new"
+Rule 5: If kyc_status == 'MINIMAL', add risk score 50, category "Medium", factor "Account has minimal KYC verification"
+Rule 6: If kyc_status == 'PENDING', add risk score 65, category "Medium", factor "Account has pending KYC verification"
+Rule 7: If (transaction_amount / old_balance > 0.5) AND (transaction_frequency > 25), add risk score 75, category "High", factor "High transaction amount relative to balance combined with high frequency"

@@ -8,7 +8,7 @@ class TransactionChatAssistant:
     def __init__(self):
         """Initialize the chat assistant with Gemini API."""
         # Look for either GEMINI_API_KEY or GOOGLE_API_KEY
-        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY")
         
         self.api_available = False
         
