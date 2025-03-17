@@ -219,6 +219,90 @@
                 </div>
             </div>
         </div>
+        <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-800 mb-6">Transaction Analytics</h2>
+    
+    <!-- Enhanced Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-2 bg-blue-50 rounded-lg">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-blue-600">Total</span>
+            </div>
+            <p class="text-2xl font-bold text-gray-900">{{ stats.total_transactions }}</p>
+            <p class="text-sm text-gray-500 mt-1">Total Transactions</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-2 bg-green-50 rounded-lg">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-green-600">Normal</span>
+            </div>
+            <p class="text-2xl font-bold text-green-600">{{ stats.normal_transactions }}</p>
+            <p class="text-sm text-gray-500 mt-1">Normal Transactions</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-2 bg-red-50 rounded-lg">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-red-600">Flagged</span>
+            </div>
+            <p class="text-2xl font-bold text-red-600">{{ stats.fraud_transactions }}</p>
+            <p class="text-sm text-gray-500 mt-1">Flagged Transactions</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-2 bg-yellow-50 rounded-lg">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-yellow-600">Risk Level</span>
+            </div>
+            <p class="text-2xl font-bold {% if stats.fraud_percentage >= 20 %}text-red-600{% else %}text-gray-900{% endif %}">
+                {{ stats.fraud_percentage|floatformat:1 }}%
+            </p>
+            <p class="text-sm text-gray-500 mt-1">Fraud Percentage</p>
+        </div>
+    </div>
+
+    <!-- Enhanced Charts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-medium text-gray-800">Transaction Methods</h3>
+                <p class="text-sm text-gray-500 mt-1">Distribution of transaction types</p>
+            </div>
+            <div class="p-6">
+                <canvas id="methodsChart" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-medium text-gray-800">Transaction Status</h3>
+                <p class="text-sm text-gray-500 mt-1">Overview of transaction flags</p>
+            </div>
+            <div class="p-6">
+                <canvas id="statusChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
         {% endif %}
 
         <!-- Transaction Graph -->
@@ -984,4 +1068,4 @@
     </div>
     {% endif %}
 </body>
-</html> 
+</html>
