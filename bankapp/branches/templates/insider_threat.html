@@ -20,6 +20,22 @@
         overflow: hidden;
         }
         
+        .modal-backdrop {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal-active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="p-6">
@@ -446,8 +462,8 @@
 </script>
 
 <!-- Transaction Modal -->
-<div id="transactionModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden transition-opacity duration-300">
-    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full mx-4 relative">
+    <div id="transactionModal" class="fixed inset-0 flex items-center justify-center modal-backdrop opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full mx-4 relative">
         <!-- Header -->
         <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
             <div>
@@ -572,15 +588,28 @@
         // Set employee initials
         document.getElementById('modalEmpInitials').textContent = empId.substring(0, 2);
         
-        // Show modal with animation
         const modal = document.getElementById('transactionModal');
-        modal.classList.remove('hidden');
+        // Show modal with animation
+        modal.classList.remove('pointer-events-none');
+        modal.classList.add('opacity-100');
+        
+        // Animate content after slight delay
+        setTimeout(() => {
+            modal.classList.add('modal-active');
+        }, 10);
+        
         document.body.classList.add('modal-open');
     }
 
     function closeModal() {
-        document.getElementById('transactionModal').classList.add('hidden');
-        document.body.classList.remove('modal-open');
+        const modal = document.getElementById('transactionModal');
+        modal.classList.remove('modal-active', 'opacity-100');
+        modal.classList.add('pointer-events-none');
+        
+        // Remove modal-open class after animation completes
+        setTimeout(() => {
+            document.body.classList.remove('modal-open');
+        }, 300);
     }
 
     // Close modal when clicking outside
