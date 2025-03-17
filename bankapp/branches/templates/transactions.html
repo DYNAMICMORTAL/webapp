@@ -8,6 +8,7 @@
     <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -20,6 +21,22 @@
         }
         .pagination-btn.active {
             @apply bg-blue-500 text-white border-blue-500 hover:bg-blue-600;
+        }
+        .graph-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .stat-card {
+            @apply bg-white rounded-lg shadow p-4 flex flex-col;
+        }
+        .stat-value {
+            @apply text-2xl font-bold;
+        }
+        .stat-label {
+            @apply text-sm text-gray-500;
         }
     </style>
 </head>
@@ -41,7 +58,7 @@
                 </a>
             </div>
             <div class="mt-2 text-sm text-gray-600">
-                Showing transactions for customer account: <span class="font-semibold">20917</span>
+                Showing transactions for customer account: <span class="font-semibold">{{ customer_id }}</span>
                 {% if total_transactions %}
                 <span class="ml-2">({{ total_transactions }} transactions found)</span>
                 {% endif %}
@@ -55,7 +72,7 @@
         {% endif %}
 
         {% if page_obj %}
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
             <div class="overflow-x-auto">
                 <table class="w-full whitespace-nowrap">
                     <thead>
@@ -107,21 +124,21 @@
                     <div>
                         <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                             {% if page_obj.has_previous %}
-                            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn rounded-l-md">
+                            <a href="?page={{ page_obj.previous_page_number }}&customer_id={{ customer_id }}" class="pagination-btn rounded-l-md">
                                 Previous
                             </a>
                             {% endif %}
                             
                             {% for i in page_obj.paginator.page_range %}
                                 {% if page_obj.number == i %}
-                                <a href="?page={{ i }}" class="pagination-btn active">{{ i }}</a>
+                                <a href="?page={{ i }}&customer_id={{ customer_id }}" class="pagination-btn active">{{ i }}</a>
                                 {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
-                                <a href="?page={{ i }}" class="pagination-btn">{{ i }}</a>
+                                <a href="?page={{ i }}&customer_id={{ customer_id }}" class="pagination-btn">{{ i }}</a>
                                 {% endif %}
                             {% endfor %}
                             
                             {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn rounded-r-md">
+                            <a href="?page={{ page_obj.next_page_number }}&customer_id={{ customer_id }}" class="pagination-btn rounded-r-md">
                                 Next
                             </a>
                             {% endif %}
@@ -131,6 +148,145 @@
             </div>
             {% endif %}
         </div>
+
+        <!-- Transaction Statistics -->
+        {% if stats %}
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Transaction Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="stat-card">
+                    <span class="stat-value">{{ stats.total_transactions }}</span>
+                    <span class="stat-label">Total Transactions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value text-green-600">{{ stats.normal_transactions }}</span>
+                    <span class="stat-label">Normal Transactions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value text-red-600">{{ stats.fraud_transactions }}</span>
+                    <span class="stat-label">Flagged Transactions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value {% if stats.fraud_percentage >= 20 %}text-red-600{% else %}text-gray-800{% endif %}">
+                        {{ stats.fraud_percentage|floatformat:1 }}%
+                    </span>
+                    <span class="stat-label">Fraud Percentage</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div class="bg-white rounded-lg shadow p-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Transaction Methods</h3>
+                    <canvas id="methodsChart" height="200"></canvas>
+                </div>
+                <div class="bg-white rounded-lg shadow p-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Transaction Status</h3>
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Transaction Graph -->
+        {% if graph_data %}
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Transaction Network Graph</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="stat-card">
+                    <span class="stat-value">{{ graph_data.node_count }}</span>
+                    <span class="stat-label">Connected Accounts</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">{{ graph_data.edge_count }}</span>
+                    <span class="stat-label">Transaction Links</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value text-red-600">{{ graph_data.fraud_transactions }}</span>
+                    <span class="stat-label">Fraud Transactions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value {% if graph_data.fraud_transactions >= 5 %}text-red-600{% else %}text-green-600{% endif %}">
+                        {% if graph_data.fraud_transactions >= 5 %}High Risk{% else %}Low Risk{% endif %}
+                    </span>
+                    <span class="stat-label">Account Risk Level</span>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-4 mb-4">
+                <h3 class="text-lg font-medium text-gray-800 mb-2">Network Visualization Guide</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-1">Node Colors</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                                <span>Customer (Low Risk)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                                <span>Customer (High Risk)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-blue-400 mr-2"></span>
+                                <span>RTGS Transactions</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-yellow-300 mr-2"></span>
+                                <span>NEFT Transactions</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-purple-400 mr-2"></span>
+                                <span>UPI Transactions</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-teal-400 mr-2"></span>
+                                <span>IMPS Transactions</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-red-300 mr-2"></span>
+                                <span>Direct Transfer</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-1">Edge Information</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li class="flex items-center">
+                                <span class="w-8 h-0.5 bg-red-500 mr-2"></span>
+                                <span>Flagged Transaction</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-8 h-0.5 bg-gray-400 mr-2"></span>
+                                <span>Normal Transaction</span>
+                            </li>
+                            <li class="flex items-center mt-2">
+                                <span>• Edge thickness indicates transaction amount</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span>• Arrow direction shows money flow</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span>• Hover over nodes/edges for details</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-sm text-gray-600 mb-4">
+                This graph shows the transaction network for customer {{ customer_id }}. 
+                The central node represents the customer account, and the connected nodes represent other accounts involved in transactions.
+                Red edges indicate flagged transactions, while gray edges indicate normal transactions.
+                <span class="block mt-2">
+                    <strong>Tip:</strong> You can zoom in/out using the mouse wheel, drag nodes to reposition, and click on nodes or edges to see more details.
+                </span>
+            </p>
+            <div class="graph-container">
+                <iframe src="{% static graph_data.graph_file %}" frameborder="0" width="100%" height="100%"></iframe>
+            </div>
+        </div>
+        {% endif %}
+
         {% else %}
         <div class="bg-white rounded-lg shadow p-6 text-center">
             <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,9 +294,67 @@
                       d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
             <h3 class="text-lg font-medium text-gray-900 mb-1">No transactions found</h3>
-            <p class="text-gray-500">There are no transactions for customer account 20917.</p>
+            <p class="text-gray-500">There are no transactions for customer account {{ customer_id }}.</p>
         </div>
         {% endif %}
     </div>
+
+    {% if stats %}
+    <script>
+        // Transaction Methods Chart
+        const methodsCtx = document.getElementById('methodsChart').getContext('2d');
+        const methodsChart = new Chart(methodsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [{% for method, count in stats.transaction_methods.items %}'{{ method }}',{% endfor %}],
+                datasets: [{
+                    data: [{% for method, count in stats.transaction_methods.items %}{{ count }},{% endfor %}],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+
+        // Transaction Status Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        const statusChart = new Chart(statusCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Normal', 'Flagged'],
+                datasets: [{
+                    data: [{{ stats.normal_transactions }}, {{ stats.fraud_transactions }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html> 

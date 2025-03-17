@@ -6,6 +6,7 @@ from django.http import JsonResponse
 import pandas as pd
 import os
 from django.core.paginator import Paginator
+from .graph_utils import generate_transaction_graph, get_transaction_statistics
 
 def branch_login(request):
     BranchName = None
@@ -167,12 +168,15 @@ def transactions(request):
     csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
                            'branches', 'data', 'final_synthetic_transactions.csv')
     
+    # Get customer ID from request or use default
+    customer_id = int(request.GET.get('customer_id', 20917))
+    
     # Read the CSV file
     try:
         df = pd.read_csv(csv_path)
         
-        # Filter transactions for customer account number 20917
-        filtered_df = df[df['customer_account_number'] == 20917]
+        # Filter transactions for customer account number
+        filtered_df = df[df['customer_account_number'] == customer_id]
         
         # Convert to list of dictionaries for template rendering
         transactions_list = filtered_df.to_dict('records')
@@ -182,9 +186,18 @@ def transactions(request):
         paginator = Paginator(transactions_list, 10)
         page_obj = paginator.get_page(page_number)
         
+        # Generate transaction graph
+        graph_data = generate_transaction_graph(customer_id)
+        
+        # Get transaction statistics
+        stats = get_transaction_statistics(customer_id)
+        
         context = {
             'page_obj': page_obj,
             'total_transactions': len(transactions_list),
+            'customer_id': customer_id,
+            'graph_data': graph_data,
+            'stats': stats
         }
         
         return render(request, 'transactions.html', context)
