@@ -258,6 +258,23 @@
             <!-- Direct Visualization using vis.js -->
             <div class="bg-white rounded-lg shadow p-4 mb-4">
                 <h3 class="text-lg font-medium text-gray-800 mb-2">Transaction Network Visualization</h3>
+                
+                <!-- Filter Controls -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button id="showAllBtn" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active">Show All</button>
+                    <button id="showFraudBtn" class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Show Fraud Only</button>
+                    <button id="showGenuineBtn" class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Show Genuine Only</button>
+                    <button id="highlightFraudBtn" class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Highlight Fraud</button>
+                    <div class="relative ml-auto mr-2">
+                        <input type="text" id="searchNode" placeholder="Search counterparty..." 
+                               class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <button id="searchBtn" class="ml-1 px-2 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">Search</button>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-600">Nodes: <span id="nodeCount">0</span> | Edges: <span id="edgeCount">0</span></span>
+                    </div>
+                </div>
+                
                 <div class="graph-container">
                     <div id="mynetwork"></div>
                     <div class="legend">
@@ -511,6 +528,285 @@
             
             // Create network
             const network = new vis.Network(container, data, options);
+            
+            // Update node and edge counters
+            document.getElementById('nodeCount').textContent = nodes.length;
+            document.getElementById('edgeCount').textContent = edges.length;
+            
+            // Store original data for filtering
+            const allNodes = new vis.DataSet(data.nodes.get());
+            const allEdges = new vis.DataSet(data.edges.get());
+            
+            // Set up filter buttons
+            const showAllBtn = document.getElementById('showAllBtn');
+            const showFraudBtn = document.getElementById('showFraudBtn');
+            const showGenuineBtn = document.getElementById('showGenuineBtn');
+            const highlightFraudBtn = document.getElementById('highlightFraudBtn');
+            const searchInput = document.getElementById('searchNode');
+            const searchBtn = document.getElementById('searchBtn');
+            
+            // Helper function to set active button
+            function setActiveButton(activeButton) {
+                [showAllBtn, showFraudBtn, showGenuineBtn, highlightFraudBtn].forEach(btn => {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-800');
+                });
+                activeButton.classList.remove('bg-gray-200', 'text-gray-800');
+                activeButton.classList.add('bg-blue-500', 'text-white');
+            }
+            
+            // Show all transactions
+            showAllBtn.addEventListener('click', function() {
+                setActiveButton(this);
+                data.nodes.clear();
+                data.edges.clear();
+                data.nodes.add(allNodes.get());
+                data.edges.add(allEdges.get());
+                document.getElementById('nodeCount').textContent = allNodes.length;
+                document.getElementById('edgeCount').textContent = allEdges.length;
+            });
+            
+            // Show only fraud transactions
+            showFraudBtn.addEventListener('click', function() {
+                setActiveButton(this);
+                
+                // Filter edges with fraud label
+                const fraudEdges = allEdges.get().filter(edge => edge.color.color === '#f56565');
+                
+                // Find nodes connected to fraud edges
+                const relevantNodeIds = new Set();
+                relevantNodeIds.add(customerId); // Always include customer node
+                
+                fraudEdges.forEach(edge => {
+                    relevantNodeIds.add(edge.from);
+                    relevantNodeIds.add(edge.to);
+                });
+                
+                const relevantNodes = allNodes.get().filter(node => relevantNodeIds.has(node.id));
+                
+                // Update the network
+                data.nodes.clear();
+                data.edges.clear();
+                data.nodes.add(relevantNodes);
+                data.edges.add(fraudEdges);
+                
+                // Update counts
+                document.getElementById('nodeCount').textContent = relevantNodes.length;
+                document.getElementById('edgeCount').textContent = fraudEdges.length;
+            });
+            
+            // Show only genuine transactions
+            showGenuineBtn.addEventListener('click', function() {
+                setActiveButton(this);
+                
+                // Filter edges with genuine label
+                const genuineEdges = allEdges.get().filter(edge => edge.color.color === '#a0aec0');
+                
+                // Find nodes connected to genuine edges
+                const relevantNodeIds = new Set();
+                relevantNodeIds.add(customerId); // Always include customer node
+                
+                genuineEdges.forEach(edge => {
+                    relevantNodeIds.add(edge.from);
+                    relevantNodeIds.add(edge.to);
+                });
+                
+                const relevantNodes = allNodes.get().filter(node => relevantNodeIds.has(node.id));
+                
+                // Update the network
+                data.nodes.clear();
+                data.edges.clear();
+                data.nodes.add(relevantNodes);
+                data.edges.add(genuineEdges);
+                
+                // Update counts
+                document.getElementById('nodeCount').textContent = relevantNodes.length;
+                document.getElementById('edgeCount').textContent = genuineEdges.length;
+            });
+            
+            // Highlight fraud transactions
+            highlightFraudBtn.addEventListener('click', function() {
+                setActiveButton(this);
+                
+                // Show all nodes and edges
+                data.nodes.clear();
+                data.edges.clear();
+                
+                // Find nodes connected to fraud edges
+                const fraudEdges = allEdges.get().filter(edge => edge.color.color === '#f56565');
+                const fraudNodeIds = new Set();
+                
+                fraudEdges.forEach(edge => {
+                    fraudNodeIds.add(edge.from);
+                    fraudNodeIds.add(edge.to);
+                });
+                
+                // Add all nodes but modify their appearance based on fraud connection
+                const highlightedNodes = allNodes.get().map(node => {
+                    const newNode = {...node};
+                    if (fraudNodeIds.has(node.id)) {
+                        // Highlight the node
+                        newNode.borderWidth = 3;
+                        newNode.borderColor = '#dc2626';
+                        newNode.shadow = {
+                            enabled: true,
+                            color: 'rgba(220, 38, 38, 0.5)',
+                            size: 10
+                        };
+                    } else {
+                        // Dim non-fraud nodes
+                        newNode.color = {
+                            ...newNode.color,
+                            opacity: 0.3
+                        };
+                        newNode.font = {
+                            ...newNode.font,
+                            color: '#9ca3af'
+                        };
+                    }
+                    return newNode;
+                });
+                
+                // Add all edges but modify their appearance
+                const highlightedEdges = allEdges.get().map(edge => {
+                    const newEdge = {...edge};
+                    if (edge.color.color !== '#f56565') {
+                        // Dim non-fraud edges
+                        newEdge.color = {color: '#e5e7eb', opacity: 0.3};
+                        newEdge.width = Math.max(1, edge.width / 2);
+                    } else {
+                        // Highlight fraud edges
+                        newEdge.width = edge.width * 1.5;
+                        newEdge.shadow = {
+                            enabled: true,
+                            color: 'rgba(220, 38, 38, 0.5)',
+                            size: 5
+                        };
+                    }
+                    return newEdge;
+                });
+                
+                // Update the network
+                data.nodes.add(highlightedNodes);
+                data.edges.add(highlightedEdges);
+                
+                // Update counts
+                document.getElementById('nodeCount').textContent = allNodes.length;
+                document.getElementById('edgeCount').textContent = allEdges.length;
+            });
+            
+            // Search functionality
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                if (!searchTerm) return;
+                
+                // Reset all buttons' active state
+                [showAllBtn, showFraudBtn, showGenuineBtn, highlightFraudBtn].forEach(btn => {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-800');
+                });
+                
+                // Find nodes matching the search term
+                const matchingNodes = allNodes.get().filter(node => 
+                    node.id.toString().toLowerCase().includes(searchTerm) || 
+                    node.label.toLowerCase().includes(searchTerm)
+                );
+                
+                if (matchingNodes.length === 0) {
+                    // Show notification if no matches found
+                    alert('No matching nodes found');
+                    return;
+                }
+                
+                // Get all edges connected to matching nodes
+                const nodeIds = new Set(matchingNodes.map(node => node.id));
+                const connectedEdges = allEdges.get().filter(edge => 
+                    nodeIds.has(edge.from) || nodeIds.has(edge.to)
+                );
+                
+                // Add the customer node always
+                if (!nodeIds.has(customerId)) {
+                    nodeIds.add(customerId);
+                    const customerNode = allNodes.get().find(node => node.id === customerId);
+                    if (customerNode) matchingNodes.push(customerNode);
+                }
+                
+                // Highlight matching nodes and their connections
+                const highlightedNodes = allNodes.get().map(node => {
+                    const newNode = {...node};
+                    if (nodeIds.has(node.id)) {
+                        // Matching node - highlight it
+                        if (node.id.toString().toLowerCase().includes(searchTerm)) {
+                            // Direct match - strongly highlight
+                            newNode.borderWidth = 3;
+                            newNode.borderColor = '#3b82f6'; // Blue
+                            newNode.shadow = {
+                                enabled: true,
+                                color: 'rgba(59, 130, 246, 0.5)',
+                                size: 10
+                            };
+                        } else {
+                            // Connected node - moderate highlight
+                            newNode.borderWidth = 2;
+                            newNode.borderColor = '#93c5fd'; // Light blue
+                        }
+                    } else {
+                        // Dim non-matching nodes
+                        newNode.color = {
+                            ...newNode.color,
+                            opacity: 0.2
+                        };
+                        newNode.font = {
+                            ...newNode.font,
+                            color: '#9ca3af'
+                        };
+                    }
+                    return newNode;
+                });
+                
+                // Highlight connected edges
+                const highlightedEdges = allEdges.get().map(edge => {
+                    const newEdge = {...edge};
+                    if (connectedEdges.some(e => e.id === edge.id)) {
+                        // Connected edge - highlight
+                        newEdge.width = edge.width * 1.5;
+                        newEdge.color = {
+                            color: edge.color.color,
+                            opacity: 1
+                        };
+                    } else {
+                        // Dim other edges
+                        newEdge.color = {color: '#e5e7eb', opacity: 0.2};
+                        newEdge.width = Math.max(0.5, edge.width / 2);
+                    }
+                    return newEdge;
+                });
+                
+                // Update the network
+                data.nodes.clear();
+                data.edges.clear();
+                data.nodes.add(highlightedNodes);
+                data.edges.add(highlightedEdges);
+                
+                // Focus on matching nodes
+                if (matchingNodes.length > 0) {
+                    const nodeIds = matchingNodes.map(node => node.id);
+                    network.fit({
+                        nodes: nodeIds,
+                        animation: {
+                            duration: 1000,
+                            easingFunction: 'easeInOutQuad'
+                        }
+                    });
+                }
+            }
             
             // Helper function to get node color based on group and fraud count
             function getNodeColor(node) {
