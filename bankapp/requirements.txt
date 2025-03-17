@@ -2,3 +2,9 @@ Django==5.1.6
 mysqlclient==2.2.7
 pytz==2023.3
 sqlparse==0.4.4
+pandas==2.2.2
+python-dotenv==1.0.1
+google-generativeai==0.4.0
+numpy==1.26.4
+requests==2.31.0
+protobuf==4.25.3

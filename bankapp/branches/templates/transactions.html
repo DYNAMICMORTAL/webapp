@@ -275,7 +275,7 @@
                     </div>
                 </div>
                 
-                <div class="graph-container">
+            <div class="graph-container">
                     <div id="mynetwork"></div>
                     <div class="legend">
                         <h3 style="margin-top: 0; font-size: 14px; font-weight: bold;">Legend</h3>
@@ -321,16 +321,46 @@
         </div>
         {% endif %}
 
-        {% else %}
-        <div class="bg-white rounded-lg shadow p-6 text-center">
-            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        <!-- Chat Interface for Transaction Queries -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Chat with Your Data</h2>
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b border-gray-200">
+                    <p class="text-sm text-gray-600">
+                        Ask questions about your transactions. Examples:
+                        <span class="block mt-1 pl-4">• "Show me all suspicious transactions in the last month"</span>
+                        <span class="block pl-4">• "Which transaction methods have the highest fraud rate?"</span>
+                        <span class="block pl-4">• "Analyze patterns in my flagged transactions"</span>
+                    </p>
+                </div>
+                
+                <div id="chat-messages" class="p-4 h-80 overflow-y-auto flex flex-col space-y-3 mb-4">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-200 rounded-lg py-2 px-3 max-w-3/4">
+                            <p class="text-sm text-gray-800">
+                                Hi there! I'm your transaction assistant. How can I help you analyze your transaction data today?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 border-t border-gray-200">
+                    <form id="chat-form" class="flex">
+                        <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded-l px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Ask a question about your transactions...">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            Send
+                        </button>
+                    </form>
+                    <div id="chat-status" class="hidden mt-2 text-sm text-gray-600 flex items-center">
+                        <svg class="animate-spin h-4 w-4 mr-2 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-1">No transactions found</h3>
-            <p class="text-gray-500">There are no transactions for customer account {{ customer_id }}.</p>
+                        Thinking...
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endif %}
     </div>
 
     {% if stats %}
@@ -844,7 +874,114 @@
                 }
             }
         });
+
+        // Chat Interface Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatStatus = document.getElementById('chat-status');
+
+            chatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+                
+                // Add user message to chat
+                appendMessage(userMessage, 'user');
+                chatInput.value = '';
+                
+                // Show thinking indicator
+                chatStatus.classList.remove('hidden');
+                
+                try {
+                    // Send request to backend
+                    const response = await fetch("{% url 'transaction_chat' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            query: userMessage,
+                            customer_id: "{{ customer_id }}"
+                        })
+                    });
+                    
+                    const responseData = await response.json();
+                    
+                    if (!response.ok) {
+                        const errorMsg = responseData.error || `Error: Server responded with ${response.status}`;
+                        console.error('Server error:', errorMsg);
+                        appendMessage(`I'm sorry, there was a problem processing your request. ${errorMsg}`, 'assistant', true);
+                    } else if (responseData.error) {
+                        console.error('API error:', responseData.error);
+                        appendMessage(`I'm sorry, there was a problem: ${responseData.error}`, 'assistant', true);
+                    } else {
+                        // Add assistant response to chat
+                        appendMessage(responseData.response || "Sorry, I couldn't generate a response.", 'assistant');
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    appendMessage('Sorry, there was a network error while processing your request. Please check your connection and try again.', 'assistant', true);
+                } finally {
+                    // Hide thinking indicator
+                    chatStatus.classList.add('hidden');
+                    
+                    // Scroll to bottom of chat
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            });
+            
+            // Add a message to the chat window
+            function appendMessage(message, sender, isError = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
+                
+                const messageBubble = document.createElement('div');
+                messageBubble.className = sender === 'user' 
+                    ? 'bg-blue-500 text-white rounded-lg py-2 px-3 max-w-3/4' 
+                    : `bg-gray-200 rounded-lg py-2 px-3 max-w-3/4 ${isError ? 'text-red-600' : 'text-gray-800'}`;
+                
+                // Check if the message contains markdown-style code blocks and format them
+                const formattedMessage = message.replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-800 text-white p-2 rounded mt-1 mb-1 overflow-x-auto"><code>$1</code></pre>');
+                
+                messageBubble.innerHTML = `<p class="text-sm whitespace-pre-wrap">${formattedMessage}</p>`;
+                messageDiv.appendChild(messageBubble);
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Helper function to get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
     </script>
+    {% endif %}
+
+    {% else %}
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-1">No transactions found</h3>
+        <p class="text-gray-500">There are no transactions for customer account {{ customer_id }}.</p>
+    </div>
     {% endif %}
 </body>
 </html> 

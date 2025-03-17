@@ -8,6 +8,10 @@ import os
 from django.core.paginator import Paginator
 from .graph_utils import get_transaction_statistics
 from .neo4j_utils import Neo4jConnection, load_transaction_data, create_transaction_graph, get_neo4j_browser_url, generate_static_visualization, generate_standalone_visualization
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from .transaction_chat import TransactionChatAssistant
 
 def branch_login(request):
     BranchName = None
@@ -243,3 +247,76 @@ def transactions(request):
     
     except Exception as e:
         return render(request, 'transactions.html', {'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def transaction_chat(request):
+    """
+    API endpoint to process transaction-related queries using Gemini LLM.
+    """
+    try:
+        # Parse request data
+        data = json.loads(request.body)
+        query = data.get('query')
+        customer_id = data.get('customer_id')
+        
+        if not query:
+            return JsonResponse({'error': 'Query is required'}, status=400)
+        if not customer_id:
+            return JsonResponse({'error': 'Customer ID is required'}, status=400)
+        
+        # Convert customer_id to integer if it's a string
+        try:
+            customer_id_int = int(customer_id)
+        except ValueError:
+            return JsonResponse({'error': 'Invalid customer ID format'}, status=400)
+        
+        # Read all transaction data
+        transactions_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+                           'branches', 'data', 'final_synthetic_transactions.csv')
+        
+        if not os.path.exists(transactions_file):
+            return JsonResponse({'error': f'Transaction data file not found: {transactions_file}'}, status=500)
+        
+        try:
+            transactions_df = pd.read_csv(transactions_file)
+        except Exception as e:
+            print(f"Error reading CSV: {str(e)}")
+            return JsonResponse({'error': f'Error reading transactions: {str(e)}'}, status=500)
+        
+        # First try to match on customer_account_number
+        customer_transactions = transactions_df[transactions_df['customer_account_number'] == customer_id_int]
+        
+        # If no results, try matching on customer_id
+        if len(customer_transactions) == 0:
+            customer_transactions = transactions_df[transactions_df['customer_id'] == customer_id_int]
+        
+        # Convert to list of dictionaries for processing
+        transactions_data = customer_transactions.to_dict('records')
+        
+        if not transactions_data:
+            return JsonResponse({'response': f"I couldn't find any transaction data for customer ID {customer_id}. Please check the customer ID and try again."})
+        
+        # Initialize chat assistant and generate response
+        try:
+            chat_assistant = TransactionChatAssistant()
+            response = chat_assistant.generate_response(query, transactions_data, customer_id)
+            return JsonResponse({'response': response})
+        except ValueError as e:
+            # Handle missing API key
+            print(f"Gemini API key error: {str(e)}")
+            return JsonResponse({
+                'response': "I'm unable to analyze your data right now because the AI service is not properly configured. Please contact technical support to set up the required API key."
+            })
+        except Exception as e:
+            # Handle other errors with the chat assistant
+            print(f"Chat assistant error: {str(e)}")
+            return JsonResponse({
+                'response': f"I encountered an error while analyzing your transaction data. Please try again later. (Error: {str(e)})"
+            })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON in request'}, status=400)
+    except Exception as e:
+        print(f"Unexpected error in transaction_chat: {str(e)}")
+        return JsonResponse({'error': f'Error processing request: {str(e)}'}, status=500)
