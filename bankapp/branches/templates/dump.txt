@@ -1,0 +1,68 @@
+<div class="mt-4 p-4 border rounded-lg bg-gray-50">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <span>⚠️</span> Employee Activity Analysis
+            </h2>
+            <p class="text-sm text-gray-600">Monitor employee access patterns for potential insider threats</p>
+            
+            <!-- Tab Structure -->
+            <div class="mt-4 flex border-b">
+                <button id="input-tab" class="py-2 px-4 flex-1 border-b-2 border-blue-500 font-medium">Input Data</button>
+                <button id="results-tab" class="py-2 px-4 flex-1 text-gray-500">Results</button>
+            </div>
+
+            <!-- Input Section -->
+            <div id="input-section" class="mt-4">
+                <div class="p-4 bg-white rounded-lg shadow">
+                    <label class="block text-sm font-medium text-gray-700">Employee ID</label>
+                    <input type="text" id="employeeID" class="w-full mt-2 p-2 border rounded-lg" placeholder="emp-XXXXX">
+                    
+                    <p class="text-xs text-gray-500 mt-2">Enter an employee ID to monitor for unusual activities that may indicate insider threats.<br>
+                    The AI analyzes access patterns, data transfers, and authentication events.</p>
+                    
+                    <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition-colors">Analyze</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="mt-4 hidden">
+                <div class="mt-4 p-4 bg-white rounded-lg shadow">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">Anomaly Score</p>
+                            <p class="text-3xl font-bold text-yellow-500">37</p>
+                            <p class="text-sm text-gray-600">Medium Risk</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Employee Information</p>
+                            <p class="font-medium">ID: emp-73921</p>
+                            <p class="font-medium">Name: James Wilson</p>
+                            <p class="text-sm text-gray-600">Department: Customer Support</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h3 class="font-semibold text-red-500">Unusual Activities</h3>
+                        <ul class="mt-2 text-sm text-gray-600 bg-red-100 p-4 rounded-lg">
+                            <li>🚨 Accessed customer records outside normal working hours (3:42 AM)</li>
+                            <li>🚨 Searched for high-value accounts across multiple regions</li>
+                            <li>🚨 Exported customer data to USB device on March 15</li>
+                            <li>🚨 Multiple failed login attempts to restricted financial systems</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h3 class="font-semibold text-blue-500">Security Recommendations</h3>
+                        <ul class="mt-2 text-sm text-gray-600 bg-blue-100 p-4 rounded-lg">
+                            <li>🔒 Implement additional monitoring for after-hours system access</li>
+                            <li>🔍 Review recent customer complaints for possible correlation</li>
+                            <li>📚 Schedule security awareness refresher training</li>
+                            <li>🚫 Temporarily restrict data export capabilities</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4 p-4 bg-yellow-100 text-sm text-gray-700 rounded-lg">
+                        ⚠ <strong>Important Note:</strong> This analysis identifies potential risks based on behavioral patterns and does not definitively indicate malicious intent. Always investigate thoroughly and follow proper HR protocols before taking any action.
+                    </div>
+                </div>
+            </div>
+        </div>

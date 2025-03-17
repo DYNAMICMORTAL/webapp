@@ -5,82 +5,253 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pattern Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #transactionModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 50;
+        }
+        
+        .modal-open {
+        overflow: hidden;
+        }
+        
+    </style>
 </head>
 <body class="p-6">
-    <div class=" mx-auto mt-10 p-6 bg-white ">
-        <h1 class="text-2xl font-bold">Insider Threat Monitoring</h1>
-        <p class="text-gray-600">Detect unusual employee activities that may indicate security risks</p>
-        
-        <div class="mt-4 p-4 border rounded-lg bg-gray-50">
-            <h2 class="text-lg font-semibold flex items-center gap-2">
-                <span>⚠️</span> Employee Activity Analysis
-            </h2>
-            <p class="text-sm text-gray-600">Monitor employee access patterns for potential insider threats</p>
+    <div class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Insider Threat Monitoring</h1>
+                        <p class="text-sm text-gray-600">Last updated: <span id="lastUpdated"></span></p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <span class="h-2 w-2 rounded-full bg-green-600 mr-2"></span>
+                            System Active
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Enhanced stat cards -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-gray-600">Total Transactions</p>
+                        <div class="p-2 bg-blue-50 rounded-lg">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-2xl font-bold text-gray-900">10</p>
+                    <div class="mt-1 flex items-center text-sm">
+                        <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                        <span class="text-green-600">↑ 12% from last month</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-gray-600">Flagged Transactions</p>
+                        <div class="p-2 bg-red-50 rounded-lg">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-2xl font-bold text-gray-900">5</p>
+                    <div class="mt-1 flex items-center text-sm">
+                        <svg class="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                        <span class="text-red-600">↓ 8% from last month</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-gray-600">High Risk Transactions</p>
+                        <div class="p-2 bg-yellow-50 rounded-lg">
+                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-2xl font-bold text-gray-900">5</p>
+                    <div class="mt-1 flex items-center text-sm">
+                        <svg class="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                        <span class="text-red-600">↓ 5% from last month</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-gray-600">Compliance Score</p>
+                        <div class="p-2 bg-green-50 rounded-lg">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-2xl font-bold text-gray-900">76%</p>
+                    <div class="mt-1 flex items-center text-sm">
+                        <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                        <span class="text-green-600">↑ 3% from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-semibold text-gray-900">Risk Distribution</h3>
+                        <div class="flex items-center gap-2">
+                            <button class="text-sm text-gray-600 hover:text-gray-900">This Month</button>
+                            <button class="text-sm text-gray-400 hover:text-gray-900">Last Month</button>
+                        </div>
+                    </div>
+                    <div class="h-[300px]">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-semibold text-gray-900">Recipient Types</h3>
+                        <div class="flex items-center gap-2">
+                            <button class="text-sm text-gray-600 hover:text-gray-900">This Month</button>
+                            <button class="text-sm text-gray-400 hover:text-gray-900">Last Month</button>
+                        </div>
+                    </div>
+                    <div class="h-[300px]">
+                        <canvas id="recipientChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="flex justify-between items-center mb-6 p-6">
+                    <div>
+                        <p class="font-semibold text-lg">Recent Transactions</p>
+                        <p class="text-sm text-gray-500">Showing last 30 days of activity</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="relative">
+                            <input type="text" 
+                                placeholder="Search transactions..." 
+                                class="pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+                            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <select class="px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                            <option value="all">All Status</option>
+                            <option value="flagged">Flagged</option>
+                            <option value="normal">Normal</option>
+                        </select>
+                    </div>
+                </div>
             
-            <!-- Tab Structure -->
-            <div class="mt-4 flex border-b">
-                <button id="input-tab" class="py-2 px-4 flex-1 border-b-2 border-blue-500 font-medium">Input Data</button>
-                <button id="results-tab" class="py-2 px-4 flex-1 text-gray-500">Results</button>
-            </div>
-
-            <!-- Input Section -->
-            <div id="input-section" class="mt-4">
-                <div class="p-4 bg-white rounded-lg shadow">
-                    <label class="block text-sm font-medium text-gray-700">Employee ID</label>
-                    <input type="text" id="employeeID" class="w-full mt-2 p-2 border rounded-lg" placeholder="emp-XXXXX">
-                    
-                    <p class="text-xs text-gray-500 mt-2">Enter an employee ID to monitor for unusual activities that may indicate insider threats.<br>
-                    The AI analyzes access patterns, data transfers, and authentication events.</p>
-                    
-                    <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition-colors">Analyze</button>
+                <div class="overflow-hidden rounded-lg border border-gray-200">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TX ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recipient</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Score</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-red-50 transition-colors duration-150">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">T980685</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                            <span class="font-medium text-red-600">E1</span>
+                                        </div>
+                                        E10071
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Gambling
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-sm font-medium">₹28,786</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        UPI
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-600">11-10-2024</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 95%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-red-600">95</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        ⚠ Flagged
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <button onclick="openModal('T980685', 'E10071', 'ACC123456', 'REC789012', 'Gambling', '₹28,786', 'UPI', '11-10-2024 14:30', 'High-risk gambling transaction', '95')" 
+                                            class="inline-flex items-center px-3 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-150">
+                                        <span class="font-medium text-sm">View Details</span>
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Similar styling for other rows -->
+                        </tbody>
+                    </table>
+                </div>
+            
+                <div class="flex items-center justify-between mt-4 p-6">
+                    <p class="text-sm text-gray-500">Showing 1-3 of 10 transactions</p>
+                    <div class="flex gap-2">
+                        <button class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">Previous</button>
+                        <button class="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">Next</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Results Section -->
-            <div id="results-section" class="mt-4 hidden">
-                <div class="mt-4 p-4 bg-white rounded-lg shadow">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm text-gray-500">Anomaly Score</p>
-                            <p class="text-3xl font-bold text-yellow-500">37</p>
-                            <p class="text-sm text-gray-600">Medium Risk</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Employee Information</p>
-                            <p class="font-medium">ID: emp-73921</p>
-                            <p class="font-medium">Name: James Wilson</p>
-                            <p class="text-sm text-gray-600">Department: Customer Support</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <h3 class="font-semibold text-red-500">Unusual Activities</h3>
-                        <ul class="mt-2 text-sm text-gray-600 bg-red-100 p-4 rounded-lg">
-                            <li>🚨 Accessed customer records outside normal working hours (3:42 AM)</li>
-                            <li>🚨 Searched for high-value accounts across multiple regions</li>
-                            <li>🚨 Exported customer data to USB device on March 15</li>
-                            <li>🚨 Multiple failed login attempts to restricted financial systems</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <h3 class="font-semibold text-blue-500">Security Recommendations</h3>
-                        <ul class="mt-2 text-sm text-gray-600 bg-blue-100 p-4 rounded-lg">
-                            <li>🔒 Implement additional monitoring for after-hours system access</li>
-                            <li>🔍 Review recent customer complaints for possible correlation</li>
-                            <li>📚 Schedule security awareness refresher training</li>
-                            <li>🚫 Temporarily restrict data export capabilities</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="mt-4 p-4 bg-yellow-100 text-sm text-gray-700 rounded-lg">
-                        ⚠ <strong>Important Note:</strong> This analysis identifies potential risks based on behavioral patterns and does not definitively indicate malicious intent. Always investigate thoroughly and follow proper HR protocols before taking any action.
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <p class="text-sm text-gray-400 mt-6">⚡ Powered by UBIShield AI</p>
+            <!-- Footer -->
+            <footer class="mt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    ⚡ Powered by UBIShield AI | 
+                    <span class="text-blue-600 hover:text-blue-800 cursor-pointer">View Documentation</span>
+                </p>
+            </footer>
+        </main>
     </div>
 
 <script>
@@ -112,7 +283,322 @@
         analyzeBtn.addEventListener('click', () => {
             resultsTab.click();
         });
+
+        // Update last updated time
+        const now = new Date();
+        document.getElementById('lastUpdated').textContent = now.toLocaleString();
+
+        // Add hover effects to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('transform', 'scale-105', 'transition-transform');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('transform', 'scale-105', 'transition-transform');
+            });
+        });
     });
 </script>
+
+<script>
+    const riskCtx = document.getElementById('riskChart').getContext('2d');
+    const riskChart = new Chart(riskCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['High Risk', 'Medium Risk', 'Low Risk'],
+            datasets: [{
+                data: [50, 30, 20],
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.9)',
+                    'rgba(245, 158, 11, 0.9)',
+                    'rgba(34, 197, 94, 0.9)'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        family: "'Inter', sans-serif",
+                        size: 14
+                    },
+                    bodyFont: {
+                        family: "'Inter', sans-serif",
+                        size: 12
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}%`;
+                        }
+                    }
+                }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true,
+                duration: 2000
+            },
+            cutout: '70%'
+        }
+    });
+
+    const recipientCtx = document.getElementById('recipientChart').getContext('2d');
+    const recipientChart = new Chart(recipientCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Gambling', 'Unknown', 'Friend', 'Customer', 'Relative', 'Business'],
+            datasets: [{
+                label: 'Number of Transactions',
+                data: [3, 3, 1.5, 1.5, 1.5, 1],
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.9)',
+                    'rgba(59, 130, 246, 0.9)',
+                    'rgba(34, 197, 94, 0.9)',
+                    'rgba(245, 158, 11, 0.9)',
+                    'rgba(168, 218, 220, 0.9)',
+                    'rgba(239, 68, 68, 0.9)'
+                ],
+                borderRadius: 6,
+                borderWidth: 0,
+                maxBarThickness: 40
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        family: "'Inter', sans-serif",
+                        size: 14
+                    },
+                    bodyFont: {
+                        family: "'Inter', sans-serif",
+                        size: 12
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 4]
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        }
+                    }
+                }
+            },
+            animation: {
+                delay: (context) => context.dataIndex * 100,
+                duration: 1000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+
+    // Add chart interactions
+    document.getElementById('riskChart').addEventListener('mousemove', (event) => {
+        const activePoints = riskChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+        document.getElementById('riskChart').style.cursor = activePoints.length ? 'pointer' : 'default';
+    });
+
+    document.getElementById('recipientChart').addEventListener('mousemove', (event) => {
+        const activePoints = recipientChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+        document.getElementById('recipientChart').style.cursor = activePoints.length ? 'pointer' : 'default';
+    });
+</script>
+
+<!-- Transaction Modal -->
+<div id="transactionModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden transition-opacity duration-300">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full mx-4 relative">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Transaction Details</h2>
+                <p class="text-sm text-gray-500 mt-1">Transaction ID: <span id="modalTxId" class="font-medium"></span></p>
+            </div>
+            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="closeModal()">
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Employee Details -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-500 mb-4">Employee Information</h3>
+                <div class="flex items-center mb-4">
+                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <span id="modalEmpInitials" class="text-blue-600 font-medium"></span>
+                    </div>
+                    <div>
+                        <p id="modalEmpId" class="font-medium text-gray-900"></p>
+                        <p id="modalEmpAcc" class="text-sm text-gray-500"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipient Details -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-500 mb-4">Recipient Information</h3>
+                <div class="flex items-center mb-4">
+                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                        <span id="modalRecInitial" class="text-red-600 font-medium">R</span>
+                    </div>
+                    <div>
+                        <p id="modalRecType" class="font-medium text-gray-900"></p>
+                        <p id="modalRecAcc" class="text-sm text-gray-500"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Details -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-500 mb-4">Transaction Information</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Amount:</span>
+                        <span id="modalAmount" class="font-bold text-gray-900"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Type:</span>
+                        <span id="modalTxType" class="text-gray-900"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Date:</span>
+                        <span id="modalDate" class="text-gray-900"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-500 mb-4">Risk Assessment</h3>
+                <div class="mb-2">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium text-gray-700">Risk Score</span>
+                        <span id="riskScore" class="text-sm font-medium text-red-600">95/100</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="riskBar" class="bg-red-600 h-2.5 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Narration -->
+        <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Transaction Narration</h3>
+            <p id="modalNarration" class="text-gray-700 bg-gray-50 p-4 rounded-lg"></p>
+        </div>
+
+        <!-- Warning Banner -->
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-start">
+            <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <div>
+                <p class="font-medium text-red-800">High Risk Transaction Detected</p>
+                <p class="text-sm text-red-700 mt-1">This transaction has been flagged for compliance review due to suspicious patterns.</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+            <button onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                Close
+            </button>
+            <button class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                Mark for Review
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal(txId, empId, empAcc, recAcc, recType, amount, txType, date, narration, risk) {
+        // Update all modal content
+        document.getElementById('modalTxId').textContent = txId;
+        document.getElementById('modalEmpId').textContent = empId;
+        document.getElementById('modalEmpAcc').textContent = empAcc;
+        document.getElementById('modalRecAcc').textContent = recAcc;
+        document.getElementById('modalRecType').textContent = recType;
+        document.getElementById('modalAmount').textContent = amount;
+        document.getElementById('modalTxType').textContent = txType;
+        document.getElementById('modalDate').textContent = date;
+        document.getElementById('modalNarration').textContent = narration;
+        document.getElementById('riskBar').style.width = risk + "%";
+        document.getElementById('riskScore').textContent = `${risk}/100`;
+        
+        // Set employee initials
+        document.getElementById('modalEmpInitials').textContent = empId.substring(0, 2);
+        
+        // Show modal with animation
+        const modal = document.getElementById('transactionModal');
+        modal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+    }
+
+    function closeModal() {
+        document.getElementById('transactionModal').classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('transactionModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+</script>
+
+   
 </body>
 </html>
