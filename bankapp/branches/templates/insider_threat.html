@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="p-6">
-    <div class=" mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+    <div class=" mx-auto mt-10 p-6 bg-white ">
         <h1 class="text-2xl font-bold">Insider Threat Monitoring</h1>
         <p class="text-gray-600">Detect unusual employee activities that may indicate security risks</p>
         
@@ -17,21 +17,26 @@
             </h2>
             <p class="text-sm text-gray-600">Monitor employee access patterns for potential insider threats</p>
             
+            <!-- Tab Structure -->
             <div class="mt-4 flex border-b">
-                <button class="py-2 px-4 flex-1 border-b-2 border-blue-500 font-medium">Input Data</button>
-                <button class="py-2 px-4 flex-1 text-gray-500">Results</button>
-            </div>
-            
-            <div class="mt-4 p-4 bg-white rounded-lg shadow">
-                <label class="block text-sm font-medium text-gray-700">Employee ID</label>
-                <input type="text" id="employeeID" class="w-full mt-2 p-2 border rounded-lg" placeholder="emp-XXXXX">
-                
-                <p class="text-xs text-gray-500 mt-2">Enter an employee ID to monitor for unusual activities that may indicate insider threats.<br>
-                The AI analyzes access patterns, data transfers, and authentication events.</p>
-                
-                <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md">Analyze</button>
+                <button id="input-tab" class="py-2 px-4 flex-1 border-b-2 border-blue-500 font-medium">Input Data</button>
+                <button id="results-tab" class="py-2 px-4 flex-1 text-gray-500">Results</button>
             </div>
 
+            <!-- Input Section -->
+            <div id="input-section" class="mt-4">
+                <div class="p-4 bg-white rounded-lg shadow">
+                    <label class="block text-sm font-medium text-gray-700">Employee ID</label>
+                    <input type="text" id="employeeID" class="w-full mt-2 p-2 border rounded-lg" placeholder="emp-XXXXX">
+                    
+                    <p class="text-xs text-gray-500 mt-2">Enter an employee ID to monitor for unusual activities that may indicate insider threats.<br>
+                    The AI analyzes access patterns, data transfers, and authentication events.</p>
+                    
+                    <button id="analyze-btn" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition-colors">Analyze</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
             <div id="results-section" class="mt-4 hidden">
                 <div class="mt-4 p-4 bg-white rounded-lg shadow">
                     <div class="flex justify-between items-center">

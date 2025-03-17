@@ -16,7 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from branches.views import branch_login, employee_login, compliance_login, dashboard, fraud_detection, risk_scoring, pattern_analysis, insider_threat, reports, mail, crm, compliance_dashboard, customer_experience, get_subcategories, get_segmentation_data, customers_page  # Import the views
+# from branches.views import branch_login, employee_login, compliance_login, dashboard, fraud_detection, risk_scoring, pattern_analysis, insider_threat, reports, mail, crm, compliance_dashboard, customer_experience, get_subcategories, get_segmentation_data, customers_page  # Import the views
+from branches.views import (
+    branch_login, employee_login, compliance_login, dashboard,
+    fraud_detection, risk_scoring, pattern_analysis, insider_threat,
+    reports, mail, crm, compliance_dashboard, customer_experience,
+    get_subcategories, get_segmentation_data, customers_page,
+    logout_view  # Add this import
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,4 +45,5 @@ urlpatterns = [
     path('customer-experience/segmentation/<str:segment_type>/<str:subcategory>/', get_segmentation_data, name='get_segmentation_data'),  # Add URL pattern for segmentation data
     path('customers_page/', customers_page, name='customers_page'),  # Add URL pattern for CustomersPage
     path('customers/search/', include('customers.urls')),  # Add URL pattern for customer search
+    path('logout/', logout_view, name='logout'),
 ]

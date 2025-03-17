@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db import connection  # Connect to MySQL RDS
+from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
 
@@ -153,3 +154,8 @@ def get_segmentation_data(request, segment_type, subcategory):
 
 def customers_page(request):
     return render(request, 'customers_page.html')
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'You have been successfully logged out.')
+    return redirect('home')

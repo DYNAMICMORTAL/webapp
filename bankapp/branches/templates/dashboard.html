@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UBIShield Dashboard</title>
     {% load static %}
-    <link rel="icon" type="image/x-icon" href="{% static 'images/logo.ico' %}">
+    <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Add Inter font for better typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,6 +18,13 @@
         }
         .fade-in {
             animation: fadeIn 0.3s ease-in-out;
+        }
+        @supports (-webkit-background-clip: text) {
+            .bg-gradient-to-l {
+                background-image: linear-gradient(to right, #d12434, #1565c0);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -34,7 +41,7 @@
                     <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png" 
                          alt="UBIShield Logo" 
                          class="w-10 h-10">
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                    <h1 class="text-xl font-bold bg-gradient-to-l from-[#d12434] to-[#1565c0] bg-clip-text text-transparent">
                         UBIShield
                     </h1>
                 </div>
@@ -51,8 +58,6 @@
                             Dashboard
                         </a></li>
 
-                        {% if user_role == 'compliance' %}
-
                         <li><a href="{% url 'search_customer' %}" 
                             class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
                             target="content-frame">
@@ -62,7 +67,7 @@
                         </svg>
                         Customer Search
                         </a></li>
-                        
+                        {% if user_role == 'compliance' %}
                         <!-- Fraud Detection -->
                         <li><a href="{% url 'fraud_detection' %}" 
                               class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
@@ -116,7 +121,7 @@
                             </svg>
                             Reports
                         </a></li>
-
+                        {% endif %}
                         <!-- Customer Contact -->
                         <li><a href="{% url 'mail' %}" 
                             class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-all duration-200" 
@@ -138,10 +143,7 @@
                         </svg>
                         Customer Relationship
                         </a></li>
-
-                        
-
-                        {% endif %}
+                       
                     </ul>
                 </nav>
             </div>
@@ -152,23 +154,40 @@
                     <div class="flex items-center gap-3">
                         <div class="relative">
                             <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                                A
+                                {% if user_role == 'compliance' %}
+                                    A
+                                {% else %}
+                                    E1
+                                {% endif %}
                             </div>
                             <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-800"></div>
                         </div>
                         <div>
-                            <h2 class="font-semibold text-white">Admin User</h2>
-                            <p class="text-sm text-gray-400">Administrator</p>
+                            <h2 class="font-semibold text-white">
+                                {% if user_role == 'compliance' %}
+                                    Admin User
+                                {% else %}
+                                    Employee 1
+                                {% endif %}
+                            </h2>
+                            <p class="text-sm text-gray-400">
+                                {% if user_role == 'compliance' %}
+                                    Administrator
+                                {% else %}
+                                    Bank Employee
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                 </div>
-                <button class="w-full bg-red-500 p-3 rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    Logout
-                </button>
+                <button onclick="window.location.href='{% url 'logout' %}'"
+                    class="w-full bg-red-500 p-3 rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Logout
+            </button>
             </div>
         </aside>
 
