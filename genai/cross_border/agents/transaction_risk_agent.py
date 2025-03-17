@@ -3,11 +3,13 @@ import json
 from groq import Groq
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.vectorstores import Chroma
 import pandas as pd
 
 class TransactionRiskAgent:
     def __init__(self):
-        """Initialize the Transaction Risk Agent with Groq's Gemma model."""
+        """Initialize the Transaction Risk Agent with Groq's Gemma model and RAG capabilities."""
         # Initialize the LLM
         self.llm = ChatGroq(
             model="gemma2-9b-it",
@@ -15,39 +17,101 @@ class TransactionRiskAgent:
             max_tokens=1024,
         )
         
-        # Load knowledge base
-        self.knowledge_base = self._load_knowledge_base()
+        # Initialize embeddings
+        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+        
+        # Load vector database
+        self.vector_db = self._load_vector_db()
         
         # Create the prompt template
         self.prompt_template = self._create_prompt_template()
     
-    def _load_knowledge_base(self):
-        """Load knowledge base files."""
-        knowledge_base = {}
-        kb_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "knowledge_base")
+    def _load_vector_db(self):
+        """Load the vector database."""
+        vector_db_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+            "vector_db"
+        )
         
-        # Load jurisdictional risks
-        try:
-            with open(os.path.join(kb_dir, "jurisdictional_risks.md"), "r") as f:
-                knowledge_base["jurisdictional_risks"] = f.read()
-        except FileNotFoundError:
-            knowledge_base["jurisdictional_risks"] = "Knowledge base file not found."
+        # Check if vector DB exists
+        if not os.path.exists(vector_db_path):
+            raise FileNotFoundError(
+                "Vector database not found. Please run setup_vector_db.py first."
+            )
         
-        # Load regulatory frameworks
-        try:
-            with open(os.path.join(kb_dir, "regulatory_frameworks.md"), "r") as f:
-                knowledge_base["regulatory_frameworks"] = f.read()
-        except FileNotFoundError:
-            knowledge_base["regulatory_frameworks"] = "Knowledge base file not found."
+        # Load the existing vector store
+        return Chroma(
+            persist_directory=vector_db_path,
+            embedding_function=self.embeddings
+        )
+    
+    def _retrieve_relevant_knowledge(self, transaction):
+        """
+        Retrieve relevant knowledge from the vector database based on transaction details.
         
-        # Load transaction patterns
-        try:
-            with open(os.path.join(kb_dir, "transaction_patterns.md"), "r") as f:
-                knowledge_base["transaction_patterns"] = f.read()
-        except FileNotFoundError:
-            knowledge_base["transaction_patterns"] = "Knowledge base file not found."
+        Args:
+            transaction (dict): Transaction data
+            
+        Returns:
+            dict: Retrieved knowledge organized by category
+        """
+        # Format transaction as a query string
+        query = ""
+        for key, value in transaction.items():
+            if pd.notna(value) and value is not None and value != "":
+                query += f"{key}: {value}, "
         
-        return knowledge_base
+        # Add specific queries based on transaction details
+        specific_queries = []
+        
+        # Add country-specific queries if countries are present
+        if "source_country" in transaction and pd.notna(transaction["source_country"]):
+            specific_queries.append(f"risks related to {transaction['source_country']}")
+        
+        if "destination_country" in transaction and pd.notna(transaction["destination_country"]):
+            specific_queries.append(f"risks related to {transaction['destination_country']}")
+        
+        # Add amount-specific queries if amount is present
+        if "amount" in transaction and pd.notna(transaction["amount"]):
+            specific_queries.append(f"transaction patterns for amount {transaction['amount']}")
+        
+        # Add transaction type queries if present
+        if "transaction_type" in transaction and pd.notna(transaction["transaction_type"]):
+            specific_queries.append(f"risks for {transaction['transaction_type']} transactions")
+        
+        # Combine the general query with specific queries
+        all_queries = [query] + specific_queries
+        
+        # Retrieve documents for each query and combine results
+        retrieved_knowledge = {
+            "jurisdictional_risks": "",
+            "regulatory_frameworks": "",
+            "transaction_patterns": ""
+        }
+        
+        # Set of already retrieved document IDs to avoid duplicates
+        retrieved_ids = set()
+        
+        for query in all_queries:
+            # Retrieve relevant documents
+            docs = self.vector_db.similarity_search(query, k=5)
+            
+            for doc in docs:
+                # Generate a unique ID for the document
+                doc_id = f"{doc.metadata['source']}_{doc.metadata['chunk_id']}"
+                
+                # Skip if already retrieved
+                if doc_id in retrieved_ids:
+                    continue
+                
+                retrieved_ids.add(doc_id)
+                
+                # Add content to the appropriate category
+                category = doc.metadata["category"]
+                if category in retrieved_knowledge:
+                    retrieved_knowledge[category] += doc.page_content + "\n\n"
+        
+        return retrieved_knowledge
     
     def _create_prompt_template(self):
         """Create the prompt template for transaction analysis."""
@@ -139,7 +203,7 @@ Provide a comprehensive risk assessment in the required JSON format."""
     
     def analyze_transaction(self, transaction):
         """
-        Analyze a cross-border transaction for risk factors.
+        Analyze a cross-border transaction for risk factors using RAG approach.
         
         Args:
             transaction (dict): Transaction data
@@ -153,10 +217,15 @@ Provide a comprehensive risk assessment in the required JSON format."""
             if pd.notna(value) and value is not None and value != "":
                 transaction_details += f"- {key}: {value}\n"
         
-        # Combine with knowledge base
+        # Retrieve relevant knowledge from vector DB
+        retrieved_knowledge = self._retrieve_relevant_knowledge(transaction)
+
+        print(f"Retrived Knowledge: {retrieved_knowledge}")
+        
+        # Combine with retrieved knowledge
         prompt_data = {
             "transaction_details": transaction_details,
-            **self.knowledge_base
+            **retrieved_knowledge
         }
         
         # Create the prompt
