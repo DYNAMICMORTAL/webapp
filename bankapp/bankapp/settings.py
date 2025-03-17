@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'vercel.app',
+    'bankapp-44wx.onrender.com'
     # ...other allowed hosts...
 ]
 
