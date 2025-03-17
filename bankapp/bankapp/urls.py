@@ -22,7 +22,7 @@ from branches.views import (
     fraud_detection, risk_scoring, pattern_analysis, insider_threat,
     reports, mail, crm, compliance_dashboard, customer_experience,
     get_subcategories, get_segmentation_data, customers_page,
-    logout_view  # Add this import
+    logout_view, transactions  # Add transactions import
 )
 
 urlpatterns = [
@@ -46,4 +46,5 @@ urlpatterns = [
     path('customers_page/', customers_page, name='customers_page'),  # Add URL pattern for CustomersPage
     path('customers/search/', include('customers.urls')),  # Add URL pattern for customer search
     path('logout/', logout_view, name='logout'),
+    path('transactions/', transactions, name='transactions'),  # Add URL pattern for transactions
 ]

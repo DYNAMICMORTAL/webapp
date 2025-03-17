@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions | UBIShield</title>
+    {% load static %}
+    <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .transaction-row:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        .pagination-btn {
+            @apply px-3 py-1 rounded border border-gray-300 hover:bg-blue-50 hover:border-blue-300 transition-colors;
+        }
+        .pagination-btn.active {
+            @apply bg-blue-500 text-white border-blue-500 hover:bg-blue-600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <header class="mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="https://res.cloudinary.com/ds2uw5gcw/image/upload/v1742113261/UBISHield_Logo_nd4wqc.png" 
+                         alt="UBIShield Logo" 
+                         class="w-8 h-8">
+                    <h1 class="text-2xl font-bold text-gray-800">Transactions</h1>
+                </div>
+                <a href="{% url 'compliance_dashboard' %}" class="text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Dashboard
+                </a>
+            </div>
+            <div class="mt-2 text-sm text-gray-600">
+                Showing transactions for customer account: <span class="font-semibold">20917</span>
+                {% if total_transactions %}
+                <span class="ml-2">({{ total_transactions }} transactions found)</span>
+                {% endif %}
+            </div>
+        </header>
+
+        {% if error %}
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if page_obj %}
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            <th class="px-4 py-3">Transaction ID</th>
+                            <th class="px-4 py-3">Date</th>
+                            <th class="px-4 py-3">Amount</th>
+                            <th class="px-4 py-3">Method</th>
+                            <th class="px-4 py-3">Currency</th>
+                            <th class="px-4 py-3">Location</th>
+                            <th class="px-4 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for transaction in page_obj %}
+                        <tr class="transaction-row text-sm">
+                            <td class="px-4 py-3 font-medium text-gray-900">{{ transaction.transaction_id }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ transaction.timestamp }}</td>
+                            <td class="px-4 py-3 font-medium {% if transaction.transaction_amount < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                                {{ transaction.transaction_amount|floatformat:2 }}
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ transaction.method_of_transaction }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ transaction.transaction_currency }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ transaction.location_data }}</td>
+                            <td class="px-4 py-3">
+                                {% if transaction.label_for_fraud == 1 %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Flagged</span>
+                                {% else %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Normal</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.paginator.num_pages > 1 %}
+            <div class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Showing <span class="font-medium">{{ page_obj.start_index }}</span> to 
+                            <span class="font-medium">{{ page_obj.end_index }}</span> of 
+                            <span class="font-medium">{{ page_obj.paginator.count }}</span> transactions
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn rounded-l-md">
+                                Previous
+                            </a>
+                            {% endif %}
+                            
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                <a href="?page={{ i }}" class="pagination-btn active">{{ i }}</a>
+                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                <a href="?page={{ i }}" class="pagination-btn">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn rounded-r-md">
+                                Next
+                            </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-1">No transactions found</h3>
+            <p class="text-gray-500">There are no transactions for customer account 20917.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> 

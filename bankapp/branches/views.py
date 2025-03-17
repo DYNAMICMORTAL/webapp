@@ -3,6 +3,9 @@ from django.db import connection  # Connect to MySQL RDS
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
+import pandas as pd
+import os
+from django.core.paginator import Paginator
 
 def branch_login(request):
     BranchName = None
@@ -157,5 +160,34 @@ def customers_page(request):
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'You have been successfully logged out.')
-    return redirect('home')
+    return redirect('branch_login')
+
+def transactions(request):
+    # Path to the CSV file
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+                           'branches', 'data', 'final_synthetic_transactions.csv')
+    
+    # Read the CSV file
+    try:
+        df = pd.read_csv(csv_path)
+        
+        # Filter transactions for customer account number 20917
+        filtered_df = df[df['customer_account_number'] == 20917]
+        
+        # Convert to list of dictionaries for template rendering
+        transactions_list = filtered_df.to_dict('records')
+        
+        # Pagination - 10 transactions per page
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(transactions_list, 10)
+        page_obj = paginator.get_page(page_number)
+        
+        context = {
+            'page_obj': page_obj,
+            'total_transactions': len(transactions_list),
+        }
+        
+        return render(request, 'transactions.html', context)
+    
+    except Exception as e:
+        return render(request, 'transactions.html', {'error': str(e)})
