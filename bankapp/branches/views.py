@@ -84,7 +84,73 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'user_role': user_role})
 
 def compliance_dashboard(request):
-    return render(request, 'compliance_dashboard.html')
+    # Path to the transactions CSV file
+    csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'transactions_with_risk.csv')
+    
+    try:
+        # Read the CSV file into a DataFrame
+        transactions_df = pd.read_csv(csv_path)
+        
+        # Convert to list of dictionaries for template rendering
+        transactions = transactions_df.to_dict('records')
+        
+        # For each transaction, determine the status based on risk score
+        for transaction in transactions:
+            risk_score = transaction.get('risk_score', 0)
+            if risk_score < 30:
+                transaction['status'] = 'Validated'
+                transaction['status_class'] = 'bg-green-100 text-green-800'
+            elif risk_score < 70:
+                transaction['status'] = 'Under Review'
+                transaction['status_class'] = 'bg-yellow-100 text-yellow-800'
+            else:
+                transaction['status'] = 'Frozen'
+                transaction['status_class'] = 'bg-red-100 text-red-800'
+                
+            # Format the timestamp to a more readable format
+            try:
+                transaction['formatted_date'] = pd.to_datetime(transaction['timestamp']).strftime('%b %d, %Y')
+                # Calculate time ago for display
+                time_diff = pd.Timestamp.now() - pd.to_datetime(transaction['timestamp'])
+                if time_diff.days > 0:
+                    transaction['time_ago'] = f"{time_diff.days}d ago"
+                else:
+                    hours = time_diff.seconds // 3600
+                    if hours > 0:
+                        transaction['time_ago'] = f"{hours}h ago"
+                    else:
+                        minutes = time_diff.seconds // 60
+                        transaction['time_ago'] = f"{minutes}m ago"
+            except:
+                transaction['formatted_date'] = 'N/A'
+                transaction['time_ago'] = 'N/A'
+                
+            # Format the amount for better display
+            try:
+                transaction['formatted_amount'] = f"${float(transaction['transaction_amount']):,.2f}"
+            except:
+                transaction['formatted_amount'] = 'N/A'
+        
+        # Calculate stats for the cards
+        high_risk_count = sum(1 for t in transactions if t.get('risk_score', 0) >= 70)
+        avg_risk_score = sum(t.get('risk_score', 0) for t in transactions) / len(transactions) if transactions else 0
+        pattern_anomalies = sum(1 for t in transactions if t.get('smurfing_indicator', 0) == 1)
+        insider_threats = sum(1 for t in transactions if t.get('previous_fraud_flag', 0) == 1)
+        
+        # Prepare context for template
+        context = {
+            'transactions': transactions,
+            'high_risk_count': high_risk_count,
+            'avg_risk_score': round(avg_risk_score, 1),
+            'pattern_anomalies': pattern_anomalies,
+            'insider_threats': insider_threats,
+            'total_transactions': len(transactions)
+        }
+        
+        return render(request, 'compliance_dashboard.html', context)
+    except Exception as e:
+        # If there's an error, pass the error message to the template
+        return render(request, 'compliance_dashboard.html', {'error': str(e)})
 
 def fraud_detection(request):
     return render(request, 'fraud_detection.html')

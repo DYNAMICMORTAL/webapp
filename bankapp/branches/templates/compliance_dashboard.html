@@ -34,8 +34,8 @@
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Fraud Alerts Card -->
-            <div onclick="location.href='{% url 'fraud_detection' %}'" 
-                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <div class="card-link bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                 data-url="{% url 'fraud_detection' %}">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Fraud Alerts</div>
                     <div class="p-2 bg-red-100 rounded-lg">
@@ -45,15 +45,15 @@
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-gray-900">37</span>
-                    <span class="text-sm font-medium text-red-600">+14%</span>
+                    <span class="text-2xl font-bold text-gray-900">{{ high_risk_count }}</span>
+                    <span class="text-sm font-medium text-red-600">High Risk</span>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">from last week</p>
+                <p class="text-xs text-gray-500 mt-1">transactions flagged for review</p>
             </div>
 
             <!-- Risk Score Card -->
-            <div onclick="location.href='{% url 'risk_scoring' %}'"
-                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <div class="card-link bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                 data-url="{% url 'risk_scoring' %}">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Avg Risk Score</div>
                     <div class="p-2 bg-blue-100 rounded-lg">
@@ -63,15 +63,15 @@
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-gray-900">72.4</span>
-                    <span class="text-sm font-medium text-green-600">-3.2</span>
+                    <span class="text-2xl font-bold text-gray-900">{{ avg_risk_score }}</span>
+                    <span class="text-sm font-medium text-blue-600">Points</span>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">from last month</p>
+                <p class="text-xs text-gray-500 mt-1">average transaction risk</p>
             </div>
 
             <!-- Pattern Analysis Card -->
-            <div onclick="location.href='{% url 'pattern_analysis' %}'"
-                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <div class="card-link bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                 data-url="{% url 'pattern_analysis' %}">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Pattern Anomalies</div>
                     <div class="p-2 bg-yellow-100 rounded-lg">
@@ -81,15 +81,15 @@
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-gray-900">14</span>
-                    <span class="text-sm font-medium text-red-600">+3</span>
+                    <span class="text-2xl font-bold text-gray-900">{{ pattern_anomalies }}</span>
+                    <span class="text-sm font-medium text-yellow-600">Detected</span>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">from yesterday</p>
+                <p class="text-xs text-gray-500 mt-1">potential smurfing activity</p>
             </div>
 
             <!-- Insider Threats Card -->
-            <div onclick="location.href='{% url 'insider_threat' %}'"
-                 class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <div class="card-link bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                 data-url="{% url 'insider_threat' %}">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-sm font-medium text-gray-600">Insider Threats</div>
                     <div class="p-2 bg-purple-100 rounded-lg">
@@ -99,23 +99,31 @@
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-gray-900">2</span>
-                    <span class="text-sm font-medium text-gray-600">No change</span>
+                    <span class="text-2xl font-bold text-gray-900">{{ insider_threats }}</span>
+                    <span class="text-sm font-medium text-purple-600">Detected</span>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">from last check</p>
+                <p class="text-xs text-gray-500 mt-1">previous fraud flags</p>
             </div>
         </div>
+
+        {% if error %}
+        <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline"> {{ error }}</span>
+        </div>
+        {% endif %}
 
         <div class="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-lg border border-gray-200">
             <!-- Header with Enhanced Filters -->
             <div class="flex justify-between items-center border-b border-gray-200 pb-4">
                 <div class="flex items-center gap-3">
                     <h2 class="text-lg font-semibold text-gray-900">All Transactions</h2>
-                    <span class="text-sm text-gray-500">(Showing last 24 hours)</span>
+                    <span class="text-sm text-gray-500">(Showing {{ total_transactions }} transactions)</span>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="relative">
                         <input type="text" 
+                               id="search-input"
                                placeholder="Search transactions..." 
                                class="pl-9 pr-4 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                         <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,18 +131,18 @@
                         </svg>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="px-4 py-1.5 bg-yellow-50 text-yellow-700 text-sm rounded-lg hover:bg-yellow-100 transition-colors duration-200 font-medium flex items-center gap-2">
+                        <button class="filter-btn px-4 py-1.5 bg-yellow-50 text-yellow-700 text-sm rounded-lg hover:bg-yellow-100 transition-colors duration-200 font-medium flex items-center gap-2" data-filter="Under Review">
                             <span>Needs Review</span>
-                            <span class="bg-yellow-500 text-white px-2 py-0.5 rounded-full text-xs">3</span>
+                            <span class="bg-yellow-500 text-white px-2 py-0.5 rounded-full text-xs" id="review-count">0</span>
                         </button>
-                        <button class="px-4 py-1.5 bg-red-50 text-red-700 text-sm rounded-lg hover:bg-red-100 transition-colors duration-200 font-medium">
+                        <button class="filter-btn px-4 py-1.5 bg-red-50 text-red-700 text-sm rounded-lg hover:bg-red-100 transition-colors duration-200 font-medium" data-filter="Frozen">
                             Frozen
                         </button>
-                        <select class="px-4 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer">
+                        <select id="status-filter" class="px-4 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer">
                             <option value="all">All Status</option>
-                            <option value="validated">Validated</option>
-                            <option value="review">Under Review</option>
-                            <option value="frozen">Frozen</option>
+                            <option value="Validated">Validated</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Frozen">Frozen</option>
                         </select>
                     </div>
                 </div>
@@ -143,157 +151,124 @@
             <!-- Transaction Table with Enhanced Styling -->
             <div class="mt-6 border border-gray-200 rounded-lg overflow-hidden">
                 <div class="flex items-center bg-gray-50 p-4 font-medium text-sm text-gray-600">
-                    <div class="w-1/4">Customer/Merchant</div>
+                    <div class="w-1/4">Customer/Recipient</div>
                     <div class="w-1/6">Time</div>
                     <div class="w-1/6">Amount</div>
                     <div class="w-1/4">Risk Score</div>
                     <div class="w-1/6">Status</div>
                 </div>
                 
-                <div class="divide-y divide-gray-200">
-                    <!-- Transaction Row Template -->
-                    <div class="flex items-center p-4 text-sm hover:bg-gray-50 transition-colors duration-150 group cursor-pointer">
-                        <div class="w-1/4">
-                            <div class="font-medium text-gray-900">Emma Johnson</div>
-                            <div class="text-gray-500 flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-                                </svg>
-                                Apple Store
+                <div class="divide-y divide-gray-200" id="transactions-container">
+                    {% if transactions %}
+                        {% for transaction in transactions %}
+                        <div class="transaction-row flex items-center p-4 text-sm hover:bg-gray-50 transition-colors duration-150 group cursor-pointer" 
+                             data-status="{{ transaction.status }}" 
+                             data-account="{{ transaction.customer_account_number }}"
+                             data-recipient="{{ transaction.to_recipient_customer_account }}"
+                             data-risk="{{ transaction.risk_score }}"
+                             data-explanation="{{ transaction.risk_explanation }}">
+                            <div class="w-1/4">
+                                <div class="font-medium text-gray-900">Customer #{{ transaction.customer_account_number }}</div>
+                                <div class="text-gray-500 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 {% if transaction.risk_score >= 70 %}text-red-500{% elif transaction.risk_score >= 30 %}text-yellow-500{% else %}text-gray-500{% endif %}" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                                    </svg>
+                                    To: #{{ transaction.to_recipient_customer_account }}
+                                </div>
+                            </div>
+                            <div class="w-1/6 text-gray-600">
+                                <div>{{ transaction.formatted_date }}</div>
+                                <div class="text-xs">{{ transaction.time_ago }}</div>
+                            </div>
+                            <div class="w-1/6 font-medium">{{ transaction.formatted_amount }}</div>
+                            <div class="w-1/4 flex items-center">
+                                <div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                    <div class="h-2 rounded-full transition-all duration-500 
+                                    {% if transaction.risk_score >= 70 %}
+                                        bg-red-500
+                                    {% elif transaction.risk_score >= 30 %}
+                                        bg-yellow-500
+                                    {% else %}
+                                        bg-green-500
+                                    {% endif %}" 
+                                    style="width: {{ transaction.risk_score }}%"></div>
+                                </div>
+                                <span class="ml-3 text-sm font-medium text-gray-700">{{ transaction.risk_score }}/100</span>
+                            </div>
+                            <div class="w-1/6">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ transaction.status_class }}">
+                                    {{ transaction.status }}
+                                </span>
                             </div>
                         </div>
-                        <div class="w-1/6 text-gray-600">25m ago</div>
-                        <div class="w-1/6 font-medium">$1,250.00</div>
-                        <div class="w-1/4 flex items-center">
-                            <div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                                <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 34%"></div>
-                            </div>
-                            <span class="ml-3 text-sm font-medium text-gray-700">34/100</span>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-4 text-center text-gray-500">
+                            No transactions found.
                         </div>
-                        <div class="w-1/6">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Validated
-                            </span>
-                        </div>
-                    </div>
-                    <!-- ...existing first transaction row... -->
-
-                <!-- High-Risk Transaction -->
-                <div class="flex items-center p-4 text-sm hover:bg-gray-50 transition-colors duration-150 group cursor-pointer">
-                    <div class="w-1/4">
-                        <div class="font-medium text-gray-900">John Smith</div>
-                        <div class="text-gray-500 flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v2h-2v-2zm0-10h2v8h-2V7z"/>
-                            </svg>
-                            Crypto Exchange
-                        </div>
-                    </div>
-                    <div class="w-1/6 text-gray-600">10m ago</div>
-                    <div class="w-1/6 font-medium">$5,000.00</div>
-                    <div class="w-1/4 flex items-center">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                            <div class="bg-red-500 h-2 rounded-full transition-all duration-500" style="width: 85%"></div>
-                        </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700">85/100</span>
-                    </div>
-                    <div class="w-1/6">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                            Frozen
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Under Review Transaction -->
-                <div class="flex items-center p-4 text-sm hover:bg-gray-50 transition-colors duration-150 group cursor-pointer">
-                    <div class="w-1/4">
-                        <div class="font-medium text-gray-900">Sarah Davis</div>
-                        <div class="text-gray-500 flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                            </svg>
-                            International Transfer
-                        </div>
-                    </div>
-                    <div class="w-1/6 text-gray-600">1h ago</div>
-                    <div class="w-1/6 font-medium">$3,750.00</div>
-                    <div class="w-1/4 flex items-center">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                            <div class="bg-yellow-500 h-2 rounded-full transition-all duration-500" style="width: 62%"></div>
-                        </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700">62/100</span>
-                    </div>
-                    <div class="w-1/6">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            Under Review
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Normal Transaction -->
-                <div class="flex items-center p-4 text-sm hover:bg-gray-50 transition-colors duration-150 group cursor-pointer">
-                    <div class="w-1/4">
-                        <div class="font-medium text-gray-900">Michael Brown</div>
-                        <div class="text-gray-500 flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-                            </svg>
-                            Grocery Store
-                        </div>
-                    </div>
-                    <div class="w-1/6 text-gray-600">2h ago</div>
-                    <div class="w-1/6 font-medium">$125.50</div>
-                    <div class="w-1/4 flex items-center">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                            <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 15%"></div>
-                        </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700">15/100</span>
-                    </div>
-                    <div class="w-1/6">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Validated
-                        </span>
-                    </div>
-                </div>
-                    <!-- Add more transaction rows with similar structure -->
+                    {% endif %}
                 </div>
             </div>
         
             <!-- Pagination -->
             <div class="mt-4 flex items-center justify-between">
                 <div class="text-sm text-gray-500">
-                    Showing 1 to 3 of 24 transactions
+                    Showing all {{ total_transactions }} transactions
                 </div>
-                <div class="flex items-center gap-2">
-                    <button class="px-3 py-1 border rounded-lg text-sm hover:bg-gray-50 transition-colors duration-200">
-                        Previous
-                    </button>
-                    <button class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors duration-200">
-                        Next
-                    </button>
+            </div>
+        </div>
+
+        <!-- Transaction Detail Modal -->
+        <div id="transaction-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">Transaction Details</h3>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <div class="text-sm text-gray-500">Customer Account</div>
+                                <div id="modal-customer" class="font-medium"></div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-sm text-gray-500">Recipient Account</div>
+                                <div id="modal-recipient" class="font-medium"></div>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="text-sm font-medium text-gray-700 mb-2">Risk Assessment</div>
+                            <div class="flex items-center mb-2">
+                                <span class="text-lg font-semibold mr-2">Risk Score:</span>
+                                <span id="modal-risk-score" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"></span>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-sm">
+                                <p class="text-gray-700" id="modal-explanation"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-gray-200 bg-gray-50">
+                    <div class="flex justify-end gap-2">
+                        <button id="override-btn" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors duration-200 text-sm font-medium">
+                            Override Assessment
+                        </button>
+                        <button id="close-btn" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm font-medium">
+                            Close
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Add this script at the end of your file -->
-        
     </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Filter functionality
-                const statusSelect = document.querySelector('select');
-                const searchInput = document.querySelector('input[type="text"]');
-                
-                statusSelect.addEventListener('change', filterTransactions);
-                searchInput.addEventListener('input', filterTransactions);
-        
-                function filterTransactions() {
-                    const status = statusSelect.value;
-                    const searchTerm = searchInput.value.toLowerCase();
-                    // Add your filtering logic here
-                }
-            });
-        </script>
     <script>
         function getCurrentDate() {
             const now = new Date();
@@ -303,6 +278,125 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('current-date').innerText = getCurrentDate();
+            
+            // Add click handlers for card links
+            document.querySelectorAll('.card-link').forEach(card => {
+                card.addEventListener('click', function() {
+                    const url = this.getAttribute('data-url');
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+            });
+            
+            // Transaction row click handler
+            const transactionRows = document.querySelectorAll('.transaction-row');
+            const modal = document.getElementById('transaction-modal');
+            const closeModal = document.getElementById('close-modal');
+            const closeBtn = document.getElementById('close-btn');
+            
+            // Count transactions by status
+            updateStatusCounts();
+            
+            // Add click event to transaction rows
+            transactionRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    // Get data attributes
+                    const customer = this.getAttribute('data-account');
+                    const recipient = this.getAttribute('data-recipient');
+                    const risk = this.getAttribute('data-risk');
+                    const explanation = this.getAttribute('data-explanation');
+                    const status = this.getAttribute('data-status');
+                    
+                    // Set modal content
+                    document.getElementById('modal-customer').textContent = customer;
+                    document.getElementById('modal-recipient').textContent = recipient;
+                    
+                    const riskScoreEl = document.getElementById('modal-risk-score');
+                    riskScoreEl.textContent = `${risk}/100`;
+                    
+                    // Set color based on risk
+                    if (risk >= 70) {
+                        riskScoreEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                    } else if (risk >= 30) {
+                        riskScoreEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800';
+                    } else {
+                        riskScoreEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800';
+                    }
+                    
+                    document.getElementById('modal-explanation').textContent = explanation;
+                    
+                    // Show modal
+                    modal.classList.remove('hidden');
+                });
+            });
+            
+            // Close modal functionality
+            [closeModal, closeBtn].forEach(element => {
+                element.addEventListener('click', function() {
+                    modal.classList.add('hidden');
+                });
+            });
+            
+            // Filter functionality
+            const statusFilter = document.getElementById('status-filter');
+            const searchInput = document.getElementById('search-input');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            // Filter button click handler
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filterValue = this.getAttribute('data-filter');
+                    statusFilter.value = filterValue;
+                    filterTransactions();
+                });
+            });
+            
+            // Status select change handler
+            statusFilter.addEventListener('change', filterTransactions);
+            
+            // Search input handler
+            searchInput.addEventListener('input', filterTransactions);
+            
+            // Function to filter transactions
+            function filterTransactions() {
+                const status = statusFilter.value;
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                transactionRows.forEach(row => {
+                    const rowStatus = row.getAttribute('data-status');
+                    const customer = row.getAttribute('data-account');
+                    const recipient = row.getAttribute('data-recipient');
+                    
+                    const statusMatch = status === 'all' || rowStatus === status;
+                    const searchMatch = 
+                        !searchTerm || 
+                        customer.includes(searchTerm) || 
+                        recipient.includes(searchTerm);
+                    
+                    if (statusMatch && searchMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update counts after filtering
+                updateVisibleCount();
+            }
+            
+            // Update status counts
+            function updateStatusCounts() {
+                const reviewCount = document.querySelectorAll('.transaction-row[data-status="Under Review"]').length;
+                document.getElementById('review-count').textContent = reviewCount;
+            }
+            
+            // Update visible count
+            function updateVisibleCount() {
+                const visibleRows = document.querySelectorAll('.transaction-row[style=""]').length;
+                document.querySelector('.text-sm.text-gray-500').textContent = 
+                    `Showing ${visibleRows} of ${transactionRows.length} transactions`;
+            }
         });
     </script>
 </body>
