@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import pandas as pd
 import os
 from django.core.paginator import Paginator
-from .graph_utils import generate_transaction_graph, get_transaction_statistics
+from .graph_utils import get_transaction_statistics
 
 def branch_login(request):
     BranchName = None
@@ -171,33 +171,71 @@ def transactions(request):
     # Get customer ID from request or use default
     customer_id = int(request.GET.get('customer_id', 20917))
     
-    # Read the CSV file
     try:
+        # Read all transactions data
         df = pd.read_csv(csv_path)
         
-        # Filter transactions for customer account number
+        # Filter transactions for the specific customer
         filtered_df = df[df['customer_account_number'] == customer_id]
-        
-        # Convert to list of dictionaries for template rendering
-        transactions_list = filtered_df.to_dict('records')
-        
-        # Pagination - 10 transactions per page
-        page_number = request.GET.get('page', 1)
-        paginator = Paginator(transactions_list, 10)
-        page_obj = paginator.get_page(page_number)
-        
-        # Generate transaction graph
-        graph_data = generate_transaction_graph(customer_id)
+        all_transactions = filtered_df.to_dict('records')
         
         # Get transaction statistics
         stats = get_transaction_statistics(customer_id)
         
+        # Pagination - 10 transactions per page for display
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(all_transactions, 10)
+        page_obj = paginator.get_page(page_number)
+        
+        # Prepare chart data as JSON
+        import json
+        
+        # Methods chart data
+        methods_labels = list(stats.get('transaction_methods', {}).keys())
+        methods_data = list(stats.get('transaction_methods', {}).values())
+        
+        # Status chart data
+        status_data = [
+            stats.get('normal_transactions', 0),
+            stats.get('fraud_transactions', 0)
+        ]
+        
+        chart_data = {
+            'methods': {
+                'labels': methods_labels,
+                'data': methods_data
+            },
+            'status': {
+                'data': status_data
+            }
+        }
+        
+        # Graph data statistics
+        graph_data = {
+            'statistics': {
+                'total_transactions': len(all_transactions),
+                'fraud_transactions': sum(1 for t in all_transactions if t.get('label_for_fraud') == 1),
+                'normal_transactions': sum(1 for t in all_transactions if t.get('label_for_fraud') == 0)
+            }
+        }
+        
+        # Calculate fraud percentage
+        if graph_data['statistics']['total_transactions'] > 0:
+            graph_data['statistics']['fraud_percentage'] = (
+                graph_data['statistics']['fraud_transactions'] / 
+                graph_data['statistics']['total_transactions'] * 100
+            )
+        else:
+            graph_data['statistics']['fraud_percentage'] = 0
+        
         context = {
             'page_obj': page_obj,
-            'total_transactions': len(transactions_list),
+            'total_transactions': len(all_transactions),
             'customer_id': customer_id,
             'graph_data': graph_data,
-            'stats': stats
+            'stats': stats,
+            'chart_data_json': json.dumps(chart_data),
+            'all_transactions_json': json.dumps(all_transactions)
         }
         
         return render(request, 'transactions.html', context)
