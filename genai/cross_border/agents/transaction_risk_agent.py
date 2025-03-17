@@ -1,17 +1,18 @@
 import os
 import json
-from langchain_google_genai import ChatGoogleGenerativeAI
+from groq import Groq
+from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 import pandas as pd
 
 class TransactionRiskAgent:
     def __init__(self):
-        """Initialize the Transaction Risk Agent with Google's Generative AI."""
+        """Initialize the Transaction Risk Agent with Groq's Gemma model."""
         # Initialize the LLM
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-pro",
+        self.llm = ChatGroq(
+            model="gemma2-9b-it",
             temperature=0.1,
-            google_api_key=os.environ.get("GOOGLE_API_KEY")
+            max_tokens=1024,
         )
         
         # Load knowledge base

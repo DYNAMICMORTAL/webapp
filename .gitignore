@@ -22,3 +22,7 @@ staticfiles/
 .vercel
 
 bankapp/bank_security.log
+
+final_synthetic_transactions.csv
+
+synthetic_data_with_risk.csv

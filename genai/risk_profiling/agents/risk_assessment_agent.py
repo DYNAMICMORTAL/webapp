@@ -1,16 +1,17 @@
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
+from groq import Groq
+from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 import json
 
 class RiskAssessmentAgent:
     def __init__(self):
-        # Initialize Google Generative AI LLM
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-pro",
+        # Initialize Groq LLM with Gemma model
+        self.llm = ChatGroq(
+            model="gemma2-9b-it",
             temperature=0.2,
-            max_output_tokens=2048,
+            max_tokens=1024,
         )
         
         # Create risk assessment prompt with a completely revised format to avoid JSON parsing issues
