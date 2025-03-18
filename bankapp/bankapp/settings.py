@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'vercel.app',
     'onrender.com',
+    'bankapp-ld2e.onrender.com'
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
