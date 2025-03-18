@@ -1,0 +1,328 @@
+[
+    {
+        "log_id": "LOG-20230317-001245",
+        "timestamp": "2023-03-17T23:45:12Z",
+        "user_id": "jdoe@company.com",
+        "employee_id": "EMP10045",
+        "name": "John Doe",
+        "action": "DATABASE_ACCESS_ATTEMPT",
+        "resource_id": "DB-CUSTOMER-FINANCE",
+        "success": false,
+        "details": {
+            "ip_address": "192.168.1.100",
+            "device_id": "UNKNOWN",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "location": "Unknown",
+            "attempt_count": 5,
+            "error_message": "Authentication failed",
+            "normal_hours": false,
+            "normal_location": false,
+            "vpn_usage": true
+        }
+    },
+    {
+        "log_id": "LOG-20230317-143256",
+        "timestamp": "2023-03-17T14:32:56Z",
+        "user_id": "jsmith@company.com",
+        "employee_id": "EMP10089",
+        "name": "Jane Smith",
+        "action": "FILE_DOWNLOAD",
+        "resource_id": "FINANCIAL-RECORDS-Q1-2023",
+        "success": true,
+        "details": {
+            "ip_address": "10.45.67.89",
+            "device_id": "FIN-WS-423",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "location": "Finance Department",
+            "file_size": "450MB",
+            "download_destination": "External USB Drive",
+            "file_count": 238,
+            "normal_hours": true,
+            "normal_location": true,
+            "file_type": "CSV, XLSX, PDF"
+        }
+    },
+    {
+        "log_id": "LOG-20230317-112347",
+        "timestamp": "2023-03-17T11:23:47Z",
+        "user_id": "rjohnson@company.com",
+        "employee_id": "EMP10156",
+        "name": "Robert Johnson",
+        "action": "PRIVILEGE_ESCALATION_ATTEMPT",
+        "resource_id": "SYS-ADMIN-RIGHTS",
+        "success": false,
+        "details": {
+            "ip_address": "10.67.34.109",
+            "device_id": "CS-WS-109",
+            "user_agent": "PowerShell/7.0",
+            "location": "Customer Service Department",
+            "attempt_count": 3,
+            "command": "sudo -i",
+            "normal_hours": true,
+            "normal_location": true,
+            "normal_behavior": false
+        }
+    },
+    {
+        "log_id": "LOG-20230318-021435",
+        "timestamp": "2023-03-18T02:14:35Z",
+        "user_id": "mchen@company.com",
+        "employee_id": "EMP10078",
+        "name": "Michael Chen",
+        "action": "DATABASE_ACCESS",
+        "resource_id": "DB-CUSTOMER-PII",
+        "success": true,
+        "details": {
+            "ip_address": "209.85.218.123",
+            "device_id": "PERSONAL-LAPTOP",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+            "location": "Remote - Residential",
+            "query_count": 47,
+            "session_duration": "1h 45m",
+            "data_volume": "35MB",
+            "normal_hours": false,
+            "normal_location": false,
+            "vpn_usage": true
+        }
+    },
+    {
+        "log_id": "LOG-20230316-104522",
+        "timestamp": "2023-03-16T10:45:22Z",
+        "user_id": "swilliams@company.com",
+        "employee_id": "EMP10112",
+        "name": "Sarah Williams",
+        "action": "FILE_ACCESS",
+        "resource_id": "HR-EXECUTIVE-COMPENSATION",
+        "success": true,
+        "details": {
+            "ip_address": "10.23.45.12",
+            "device_id": "HR-WS-012",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "location": "HR Department",
+            "files_accessed": 12,
+            "access_duration": "23m",
+            "normal_hours": true,
+            "normal_location": true,
+            "authorization_level": "Standard HR (Insufficient)"
+        }
+    },
+    {
+        "log_id": "LOG-20230317-153045",
+        "timestamp": "2023-03-17T15:30:45Z",
+        "user_id": "dthompson@company.com",
+        "employee_id": "EMP10034",
+        "name": "David Thompson",
+        "action": "SYSTEM_MAINTENANCE",
+        "resource_id": "DB-SERVER-CLUSTER",
+        "success": true,
+        "details": {
+            "ip_address": "10.1.1.5",
+            "device_id": "IT-ADMIN-TERMINAL",
+            "user_agent": "SSH Client",
+            "location": "Server Room",
+            "maintenance_type": "Database Optimization",
+            "ticket_id": "MAINT-2023-0892",
+            "normal_hours": true,
+            "normal_location": true,
+            "pre_approved": true
+        }
+    },
+    {
+        "log_id": "LOG-20230317-091533",
+        "timestamp": "2023-03-17T09:15:33Z",
+        "user_id": "ljohnson@company.com",
+        "employee_id": "EMP10092",
+        "name": "Lisa Johnson",
+        "action": "REPORT_GENERATION",
+        "resource_id": "FINANCIAL-DB-Q1",
+        "success": true,
+        "details": {
+            "ip_address": "10.45.67.102",
+            "device_id": "FIN-WS-102",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "location": "Finance Department",
+            "report_type": "Quarterly Financial Summary",
+            "data_accessed": "Q1 Financial Records",
+            "normal_hours": true,
+            "normal_location": true,
+            "scheduled_task": true
+        }
+    },
+    {
+        "log_id": "LOG-20230317-164218",
+        "timestamp": "2023-03-17T16:42:18Z",
+        "user_id": "tlee@company.com",
+        "employee_id": "EMP10137",
+        "name": "Thomas Lee",
+        "action": "CODE_REPOSITORY_DOWNLOAD",
+        "resource_id": "MAIN-PRODUCT-REPO",
+        "success": true,
+        "details": {
+            "ip_address": "10.56.78.78",
+            "device_id": "DEV-WS-078",
+            "user_agent": "Git/2.35.1",
+            "location": "Product Development",
+            "repository": "main-product",
+            "branch": "master",
+            "download_size": "2.3GB",
+            "download_destination": "Personal USB Device",
+            "normal_hours": true,
+            "normal_location": true,
+            "authorization_bypass": true
+        }
+    },
+    {
+        "log_id": "LOG-20230317-132540",
+        "timestamp": "2023-03-17T13:25:40Z",
+        "user_id": "agarcia@company.com",
+        "employee_id": "EMP10204",
+        "name": "Amanda Garcia",
+        "action": "CUSTOMER_RECORD_ACCESS",
+        "resource_id": "CUSTOMER-45872",
+        "success": true,
+        "details": {
+            "ip_address": "10.67.34.45",
+            "device_id": "CS-WS-045",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "location": "Customer Support",
+            "ticket_id": "45872",
+            "access_duration": "12m",
+            "fields_accessed": ["name", "address", "order_history", "payment_method"],
+            "normal_hours": true,
+            "normal_location": true,
+            "authorization": "Approved"
+        }
+    },
+    {
+        "log_id": "LOG-20230317-213855",
+        "timestamp": "2023-03-17T21:38:55Z",
+        "user_id": "ewilson@company.com",
+        "employee_id": "EMP10067",
+        "name": "Eric Wilson",
+        "action": "FIREWALL_CONFIGURATION_CHANGE",
+        "resource_id": "NETWORK-FIREWALL-MAIN",
+        "success": true,
+        "details": {
+            "ip_address": "192.168.1.245",
+            "device_id": "REMOTE-LAPTOP",
+            "user_agent": "SSH Client",
+            "location": "Remote - Residential",
+            "rule_changes": [
+                {
+                    "rule_id": "FW-3892",
+                    "action": "ALLOW",
+                    "source_ip": "203.87.45.23/32",
+                    "destination_port": "22,3389,5900"
+                }
+            ],
+            "change_ticket": "None",
+            "normal_hours": false,
+            "normal_location": false,
+            "approval_status": "None"
+        }
+    },
+    {
+        "log_id": "LOG-20230317-082234",
+        "timestamp": "2023-03-17T08:22:34Z",
+        "user_id": "mbrown@company.com",
+        "employee_id": "EMP10023",
+        "name": "Mark Brown",
+        "action": "LOGIN",
+        "resource_id": "WORKSTATION-LOGIN",
+        "success": true,
+        "details": {
+            "ip_address": "10.34.56.78",
+            "device_id": "SALES-WS-056",
+            "user_agent": "Windows Login",
+            "location": "Sales Department",
+            "authentication_type": "Password",
+            "normal_hours": true,
+            "normal_location": true,
+            "login_count": 1
+        }
+    },
+    {
+        "log_id": "LOG-20230317-103045",
+        "timestamp": "2023-03-17T10:30:45Z",
+        "user_id": "kpatel@company.com",
+        "employee_id": "EMP10114",
+        "name": "Kiran Patel",
+        "action": "EMAIL_SENT",
+        "resource_id": "OUTLOOK-EMAIL",
+        "success": true,
+        "details": {
+            "ip_address": "10.23.45.89",
+            "device_id": "MKT-WS-023",
+            "user_agent": "Microsoft Outlook/16.0",
+            "location": "Marketing Department",
+            "recipients": 24,
+            "attachment_count": 2,
+            "attachment_size": "3.5MB",
+            "normal_hours": true,
+            "normal_location": true,
+            "domain_recipients": "All internal"
+        }
+    },
+    {
+        "log_id": "LOG-20230317-174532",
+        "timestamp": "2023-03-17T17:45:32Z",
+        "user_id": "arodriguez@company.com",
+        "employee_id": "EMP10098",
+        "name": "Alex Rodriguez",
+        "action": "LOGOUT",
+        "resource_id": "WORKSTATION-LOGOUT",
+        "success": true,
+        "details": {
+            "ip_address": "10.45.67.34",
+            "device_id": "ACCT-WS-012",
+            "user_agent": "Windows Logout",
+            "location": "Accounting Department",
+            "session_duration": "8h 12m",
+            "normal_hours": true,
+            "normal_location": true
+        }
+    },
+    {
+        "log_id": "LOG-20230316-221043",
+        "timestamp": "2023-03-16T22:10:43Z",
+        "user_id": "jsmith@company.com",
+        "employee_id": "EMP10089",
+        "name": "Jane Smith",
+        "action": "VPN_CONNECTION",
+        "resource_id": "COMPANY-VPN",
+        "success": true,
+        "details": {
+            "ip_address": "76.34.112.45",
+            "device_id": "PERSONAL-LAPTOP",
+            "user_agent": "Cisco AnyConnect",
+            "location": "Residential - Chicago",
+            "connection_duration": "3h 24m",
+            "normal_hours": false,
+            "normal_location": false,
+            "authentication_type": "2FA"
+        }
+    },
+    {
+        "log_id": "LOG-20230318-010735",
+        "timestamp": "2023-03-18T01:07:35Z",
+        "user_id": "ewilson@company.com",
+        "employee_id": "EMP10067",
+        "name": "Eric Wilson",
+        "action": "FILE_UPLOAD",
+        "resource_id": "EXTERNAL-CLOUD-STORAGE",
+        "success": true,
+        "details": {
+            "ip_address": "192.168.1.245",
+            "device_id": "REMOTE-LAPTOP",
+            "user_agent": "Chrome/110.0.5481.177",
+            "location": "Remote - Residential",
+            "destination": "personal.cloud.storage.com",
+            "files_uploaded": 12,
+            "total_size": "245MB",
+            "file_types": ["config", "sh", "key"],
+            "normal_hours": false,
+            "normal_location": false,
+            "data_classification": "Potentially Sensitive"
+        }
+    }
+] 

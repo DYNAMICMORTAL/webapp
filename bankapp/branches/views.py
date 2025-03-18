@@ -521,3 +521,164 @@ def risk_assessment_api(request):
     except Exception as e:
         print(f"Error in risk_assessment_api: {str(e)}")
         return JsonResponse({'error': f'Error processing risk assessment: {str(e)}'}, status=500)
+
+
+def insider_threat(request):
+    """
+    Renders the insider threat detection template
+    """
+    return render(request, 'insider_threat.html')
+
+@csrf_exempt
+@require_POST
+def insider_threat_logs_api(request):
+    """
+    API endpoint to process insider threat logs and get AI analysis
+    """
+    try:
+        # Get logs directory path
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        logs_dir = os.path.join(base_dir, 'insider_threat', 'logs')
+        
+        print(f"Accessing logs directory: {logs_dir}")
+        
+        if not os.path.exists(logs_dir):
+            print(f"ERROR: Directory not found: {logs_dir}")
+            return JsonResponse({'success': False, 'error': f'Logs directory not found: {logs_dir}'}, status=404)
+        
+        # Try to import log processing functions
+        try:
+            from .insider_threat.process_logs import load_logs_from_directory, prepare_prompt_for_gemini, call_gemini_llm
+            
+            # Load logs data from directory
+            logs_data = load_logs_from_directory(logs_dir)
+            print(f"Loaded logs data: {list(logs_data.keys())}")
+            
+            # Check if we have log data
+            if not logs_data:
+                return JsonResponse({'success': False, 'error': 'No log files found or could not be loaded'}, status=404)
+            
+            # Check for GOOGLE_API_KEY environment variable before proceeding
+            if 'GOOGLE_API_KEY' not in os.environ:
+                # Use fallback preprocessing without Gemini
+                print("WARNING: GOOGLE_API_KEY not found. Using basic log processing without AI analysis.")
+                
+                # Get log data
+                insider_threats = logs_data.get('insider_threat_logs', [])
+                activity_logs = logs_data.get('activity_logs', [])
+                
+                # Combine logs
+                all_logs = []
+                if insider_threats:
+                    # Add severity and risk score placeholders if not present
+                    for log in insider_threats:
+                        if 'severity' not in log:
+                            log['severity'] = 'Medium'  # Default severity
+                        if 'risk_score' not in log:
+                            log['risk_score'] = 50  # Default risk score
+                    all_logs.extend(insider_threats)
+                    
+                if activity_logs:
+                    # Add severity and risk score placeholders if not present
+                    for log in activity_logs:
+                        if 'severity' not in log:
+                            log['severity'] = 'Medium'  # Default severity
+                        if 'risk_score' not in log:
+                            log['risk_score'] = 50  # Default risk score
+                    all_logs.extend(activity_logs)
+            else:
+                # Prepare prompt for Gemini LLM
+                prompt = prepare_prompt_for_gemini(logs_data)
+                
+                # Call Gemini LLM
+                print("Calling Gemini LLM for analysis...")
+                response_text = call_gemini_llm(prompt)
+                
+                # Parse the response from Gemini
+                try:
+                    # Gemini might return a list directly instead of {"alerts": [...]}
+                    response_data = json.loads(response_text)
+                    
+                    # Check if response is a list (direct array of alerts)
+                    if isinstance(response_data, list):
+                        all_logs = response_data
+                    else:
+                        # Otherwise try to get the alerts property
+                        all_logs = response_data.get('alerts', [])
+                        
+                    print(f"Successfully parsed Gemini response, found {len(all_logs)} alerts")
+                except json.JSONDecodeError as e:
+                    print(f"Error parsing Gemini response: {str(e)}")
+                    print(f"Response preview: {response_text[:200]}...")
+                    
+                    # Fallback to original log data if response parsing fails
+                    insider_threats = logs_data.get('insider_threat_logs', [])
+                    activity_logs = logs_data.get('activity_logs', [])
+                    
+                    # Combine logs
+                    all_logs = []
+                    if insider_threats:
+                        for log in insider_threats:
+                            if 'severity' not in log:
+                                log['severity'] = 'Medium'
+                            if 'risk_score' not in log:
+                                log['risk_score'] = 50
+                            # Add AI analysis placeholder
+                            log['analysis'] = "AI analysis not available"
+                            log['recommended_actions'] = ["Enable API key for AI analysis"]
+                        all_logs.extend(insider_threats)
+                        
+                    if activity_logs:
+                        for log in activity_logs:
+                            if 'severity' not in log:
+                                log['severity'] = 'Medium'
+                            if 'risk_score' not in log:
+                                log['risk_score'] = 50
+                            # Add AI analysis placeholder
+                            log['analysis'] = "AI analysis not available"
+                            log['recommended_actions'] = ["Enable API key for AI analysis"]
+                        all_logs.extend(activity_logs)
+                        
+        except ImportError as e:
+            print(f"Error importing process_logs module: {str(e)}")
+            return JsonResponse({'success': False, 'error': f'Failed to import process_logs module: {str(e)}'}, status=500)
+        except Exception as e:
+            print(f"Error processing logs: {str(e)}")
+            return JsonResponse({'success': False, 'error': f'Error processing logs: {str(e)}'}, status=500)
+        
+        # Sort logs by risk score
+        all_logs.sort(key=lambda x: x.get('risk_score', 0), reverse=True)
+        
+        # Calculate stats
+        total_alerts = len(all_logs)
+        critical_alerts = sum(1 for log in all_logs if log.get('severity') == 'Critical')
+        high_alerts = sum(1 for log in all_logs if log.get('severity') == 'High')
+        medium_alerts = sum(1 for log in all_logs if log.get('severity') == 'Medium')
+        low_alerts = sum(1 for log in all_logs if log.get('severity') == 'Low')
+        
+        # Calculate average risk score
+        if all_logs:
+            avg_risk_score = sum(log.get('risk_score', 0) for log in all_logs) / len(all_logs)
+        else:
+            avg_risk_score = 0
+            
+        # Prepare response
+        response = {
+            'success': True,
+            'alerts': all_logs,
+            'stats': {
+                'total_alerts': total_alerts,
+                'critical_alerts': critical_alerts,
+                'high_alerts': high_alerts,
+                'medium_alerts': medium_alerts,
+                'low_alerts': low_alerts,
+                'avg_risk_score': round(avg_risk_score, 1)
+            }
+        }
+        
+        return JsonResponse(response)
+        
+    except Exception as e:
+        print(f"ERROR in insider_threat_logs_api: {str(e)}")
+        return JsonResponse({'success': False, 'error': f'Error processing request: {str(e)}'}, status=500)
+

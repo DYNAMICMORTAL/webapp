@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pattern Analysis</title>
+    <title>Insider Threat Detection</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         #transactionModal {
             position: fixed;
@@ -36,221 +35,79 @@
             transform: scale(1);
             opacity: 1;
         }
+        
+        .loading-spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s ease infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="p-6">
     <div class="min-h-screen bg-gray-50">
-        <!-- Header -->
-        <header class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Insider Threat Monitoring</h1>
-                        <p class="text-sm text-gray-600">Last updated: <span id="lastUpdated"></span></p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                            <span class="h-2 w-2 rounded-full bg-green-600 mr-2"></span>
-                            System Active
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
+      
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Enhanced stat cards -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm font-medium text-gray-600">Total Transactions</p>
-                        <div class="p-2 bg-blue-50 rounded-lg">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p class="mt-4 text-2xl font-bold text-gray-900">10</p>
-                    <div class="mt-1 flex items-center text-sm">
-                        <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        <span class="text-green-600">↑ 12% from last month</span>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm font-medium text-gray-600">Flagged Transactions</p>
-                        <div class="p-2 bg-red-50 rounded-lg">
-                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p class="mt-4 text-2xl font-bold text-gray-900">5</p>
-                    <div class="mt-1 flex items-center text-sm">
-                        <svg class="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        <span class="text-red-600">↓ 8% from last month</span>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm font-medium text-gray-600">High Risk Transactions</p>
-                        <div class="p-2 bg-yellow-50 rounded-lg">
-                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p class="mt-4 text-2xl font-bold text-gray-900">5</p>
-                    <div class="mt-1 flex items-center text-sm">
-                        <svg class="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        <span class="text-red-600">↓ 5% from last month</span>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm font-medium text-gray-600">Compliance Score</p>
-                        <div class="p-2 bg-green-50 rounded-lg">
-                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p class="mt-4 text-2xl font-bold text-gray-900">76%</p>
-                    <div class="mt-1 flex items-center text-sm">
-                        <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
-                        <span class="text-green-600">↑ 3% from last month</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="font-semibold text-gray-900">Risk Distribution</h3>
-                        <div class="flex items-center gap-2">
-                            <button class="text-sm text-gray-600 hover:text-gray-900">This Month</button>
-                            <button class="text-sm text-gray-400 hover:text-gray-900">Last Month</button>
-                        </div>
-                    </div>
-                    <div class="h-[300px]">
-                        <canvas id="riskChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="font-semibold text-gray-900">Recipient Types</h3>
-                        <div class="flex items-center gap-2">
-                            <button class="text-sm text-gray-600 hover:text-gray-900">This Month</button>
-                            <button class="text-sm text-gray-400 hover:text-gray-900">Last Month</button>
-                        </div>
-                    </div>
-                    <div class="h-[300px]">
-                        <canvas id="recipientChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pattern Analysis Output Table -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-8">
-                <div class="flex justify-between items-center mb-4 p-6">
-                    <p class="font-semibold text-lg">Pattern Analysis Output</p>
-                    <p class="text-sm text-gray-500">Generated insights from transactions</p>
-                </div>
-
-                <div class="overflow-hidden rounded-lg border border-gray-200">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pattern ID</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Level</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Occurrences</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">P001</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">Frequent high-value transactions</td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        High Volume
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        High Risk
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">12</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">P002</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">Multiple small transactions within an hour</td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        Smurfing
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                        Medium Risk
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">34</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">P003</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">Transactions linked to flagged accounts</td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Fraudulent Links
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500 text-white">
-                                        Critical Risk
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">7</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Transactions Table Section -->
+       
+            <!-- Insider Threat Table Section -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="flex justify-between items-center mb-6 p-6">
                     <div>
-                        <p class="font-semibold text-lg">Recent Transactions</p>
-                        <p class="text-sm text-gray-500">Showing last 30 days of activity</p>
+                        <p class="font-semibold text-lg">Insider Threat Alerts</p>
+                        <p class="text-sm text-gray-500">AI-powered analysis of suspicious employee activities</p>
                     </div>
                     <div class="flex gap-3">
                         <div class="relative">
                             <input type="text" 
-                                placeholder="Search transactions..." 
+                                id="search-input"
+                                placeholder="Search alerts..." 
                                 class="pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
                             <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
-                        <select class="px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                            <option value="all">All Status</option>
-                            <option value="flagged">Flagged</option>
-                            <option value="normal">Normal</option>
+                        <select id="severity-filter" class="px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                            <option value="all">All Severity</option>
+                            <option value="Critical">Critical</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
                         </select>
+                        <button id="generate-logs-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium transition-colors duration-150">
+                            Generate Logs
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Row -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 px-6 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <p class="text-xs text-blue-500 font-medium uppercase">Total Alerts</p>
+                        <p id="stat-total-alerts" class="text-2xl font-bold text-blue-700">0</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                        <p class="text-xs text-red-500 font-medium uppercase">Critical</p>
+                        <p id="stat-critical-alerts" class="text-2xl font-bold text-red-700">0</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                        <p class="text-xs text-orange-500 font-medium uppercase">High</p>
+                        <p id="stat-high-alerts" class="text-2xl font-bold text-orange-700">0</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                        <p class="text-xs text-yellow-500 font-medium uppercase">Medium</p>
+                        <p id="stat-medium-alerts" class="text-2xl font-bold text-yellow-700">0</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                        <p class="text-xs text-green-500 font-medium uppercase">Average Risk Score</p>
+                        <p id="stat-avg-risk-score" class="text-2xl font-bold text-green-700">0</p>
                     </div>
                 </div>
             
@@ -258,289 +115,345 @@
                     <table class="w-full">
                         <thead>
                             <tr class="bg-gray-50">
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TX ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alert ID</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recipient</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Score</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr class="hover:bg-red-50 transition-colors duration-150">
-                                <td class="px-4 py-3 text-sm font-medium text-gray-900">T980685</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">
-                                    <div class="flex items-center">
-                                        <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                            <span class="font-medium text-red-600">E1</span>
-                                        </div>
-                                        E10071
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Gambling
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm font-medium">₹28,786</td>
-                                <td class="px-4 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        UPI
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-sm text-gray-600">11-10-2024</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center">
-                                        <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                                            <div class="bg-red-500 h-2 rounded-full" style="width: 95%"></div>
-                                        </div>
-                                        <span class="text-sm font-medium text-red-600">95</span>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        ⚠ Flagged
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <button onclick="openModal('T980685', 'E10071', 'ACC123456', 'REC789012', 'Gambling', '₹28,786', 'UPI', '11-10-2024 14:30', 'High-risk gambling transaction', '95')" 
-                                            class="inline-flex items-center px-3 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-150">
-                                        <span class="font-medium text-sm">View Details</span>
-                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </button>
+                        <tbody id="alerts-table-body" class="divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                                    <p>Click "Generate Logs" to analyze insider threats</p>
                                 </td>
                             </tr>
-                            <!-- Similar styling for other rows -->
                         </tbody>
                     </table>
                 </div>
             
                 <div class="flex items-center justify-between mt-4 p-6">
-                    <p class="text-sm text-gray-500">Showing 1-3 of 10 transactions</p>
+                    <p id="pagination-info" class="text-sm text-gray-500">Showing 0 alerts</p>
                     <div class="flex gap-2">
-                        <button class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">Previous</button>
-                        <button class="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">Next</button>
+                        <button id="prev-page-btn" class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                        <button id="next-page-btn" class="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loading-overlay" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+                    <div class="loading-spinner mb-4"></div>
+                    <p class="text-gray-700 font-medium">Processing logs, please wait...</p>
+                    <p class="text-gray-500 text-sm mt-2">Gemini AI is analyzing insider threats</p>
                 </div>
             </div>
 
             <!-- Footer -->
             <footer class="mt-8 text-center">
-                <p class="text-sm text-gray-500">
-                    ⚡ Powered by UBIShield AI | 
-                    <span class="text-blue-600 hover:text-blue-800 cursor-pointer">View Documentation</span>
-                </p>
+                <p class="text-sm text-center text-gray-500 mt-6">⚡ Powered by UBIShield AI</p>
             </footer>
         </main>
     </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const inputTab = document.getElementById('input-tab');
-        const resultsTab = document.getElementById('results-tab');
-        const inputSection = document.getElementById('input-section');
-        const resultsSection = document.getElementById('results-section');
-        const analyzeBtn = document.getElementById('analyze-btn');
-
-        inputTab.addEventListener('click', () => {
-            inputTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
-            inputTab.classList.remove('text-gray-400');
-            resultsTab.classList.remove('border-b-2', 'border-blue-500', 'font-semibold');
-            resultsTab.classList.add('text-gray-400');
-            inputSection.classList.remove('hidden');
-            resultsSection.classList.add('hidden');
-        });
-
-        resultsTab.addEventListener('click', () => {
-            resultsTab.classList.add('border-b-2', 'border-blue-500', 'font-semibold');
-            resultsTab.classList.remove('text-gray-400');
-            inputTab.classList.remove('border-b-2', 'border-blue-500', 'font-semibold');
-            inputTab.classList.add('text-gray-400');
-            resultsSection.classList.remove('hidden');
-            inputSection.classList.add('hidden');
-        });
-
-        analyzeBtn.addEventListener('click', () => {
-            resultsTab.click();
-        });
-
-        // Update last updated time
-        const now = new Date();
-        document.getElementById('lastUpdated').textContent = now.toLocaleString();
-
-        // Add hover effects to stat cards
-        document.querySelectorAll('.stat-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.classList.add('transform', 'scale-105', 'transition-transform');
-            });
-            card.addEventListener('mouseleave', () => {
-                card.classList.remove('transform', 'scale-105', 'transition-transform');
-            });
-        });
-    });
-</script>
-
-<script>
-    const riskCtx = document.getElementById('riskChart').getContext('2d');
-    const riskChart = new Chart(riskCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['High Risk', 'Medium Risk', 'Low Risk'],
-            datasets: [{
-                data: [50, 30, 20],
-                backgroundColor: [
-                    'rgba(239, 68, 68, 0.9)',
-                    'rgba(245, 158, 11, 0.9)',
-                    'rgba(34, 197, 94, 0.9)'
-                ],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: {
-                            family: "'Inter', sans-serif",
-                            size: 12
-                        }
-                    }
+        // DOM Elements
+        const generateLogsBtn = document.getElementById('generate-logs-btn');
+        const alertsTableBody = document.getElementById('alerts-table-body');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const searchInput = document.getElementById('search-input');
+        const severityFilter = document.getElementById('severity-filter');
+        const prevPageBtn = document.getElementById('prev-page-btn');
+        const nextPageBtn = document.getElementById('next-page-btn');
+        const paginationInfo = document.getElementById('pagination-info');
+        
+        // Stats elements
+        const statTotalAlerts = document.getElementById('stat-total-alerts');
+        const statCriticalAlerts = document.getElementById('stat-critical-alerts');
+        const statHighAlerts = document.getElementById('stat-high-alerts');
+        const statMediumAlerts = document.getElementById('stat-medium-alerts');
+        const statAvgRiskScore = document.getElementById('stat-avg-risk-score');
+        
+        // Pagination state
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredAlerts = [];
+        
+        // Fetch and process logs
+        generateLogsBtn.addEventListener('click', function() {
+            loadingOverlay.classList.remove('hidden');
+            
+            fetch('/api/insider-threat/logs/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    padding: 12,
-                    titleFont: {
-                        family: "'Inter', sans-serif",
-                        size: 14
-                    },
-                    bodyFont: {
-                        family: "'Inter', sans-serif",
-                        size: 12
-                    },
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ${context.raw}%`;
-                        }
-                    }
+                body: JSON.stringify({}) // Send empty JSON object
+            })
+            .then(response => {
+                // Check if response is ok (status in the range 200-299)
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
                 }
-            },
-            animation: {
-                animateScale: true,
-                animateRotate: true,
-                duration: 2000
-            },
-            cutout: '70%'
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Store all alerts
+                    filteredAlerts = data.alerts;
+                    
+                    // Update stats
+                    updateStats(data.stats);
+                    
+                    // Render alerts
+                    renderAlerts();
+                } else {
+                    alertsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="px-4 py-8 text-center text-red-500">
+                                <p>Error: ${data.error || 'Failed to load alerts'}</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alertsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-8 text-center text-red-500">
+                            <p>Error: ${error.message || 'Failed to load alerts'}</p>
+                        </td>
+                    </tr>
+                `;
+            })
+            .finally(() => {
+                loadingOverlay.classList.add('hidden');
+            });
+        });
+        
+        // Update Stats
+        function updateStats(stats) {
+            statTotalAlerts.textContent = stats.total_alerts;
+            statCriticalAlerts.textContent = stats.critical_alerts;
+            statHighAlerts.textContent = stats.high_alerts;
+            statMediumAlerts.textContent = stats.medium_alerts;
+            statAvgRiskScore.textContent = stats.avg_risk_score;
         }
-    });
-
-    const recipientCtx = document.getElementById('recipientChart').getContext('2d');
-    const recipientChart = new Chart(recipientCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Gambling', 'Unknown', 'Friend', 'Customer', 'Relative', 'Business'],
-            datasets: [{
-                label: 'Number of Transactions',
-                data: [3, 3, 1.5, 1.5, 1.5, 1],
-                backgroundColor: [
-                    'rgba(239, 68, 68, 0.9)',
-                    'rgba(59, 130, 246, 0.9)',
-                    'rgba(34, 197, 94, 0.9)',
-                    'rgba(245, 158, 11, 0.9)',
-                    'rgba(168, 218, 220, 0.9)',
-                    'rgba(239, 68, 68, 0.9)'
-                ],
-                borderRadius: 6,
-                borderWidth: 0,
-                maxBarThickness: 40
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    padding: 12,
-                    titleFont: {
-                        family: "'Inter', sans-serif",
-                        size: 14
-                    },
-                    bodyFont: {
-                        family: "'Inter', sans-serif",
-                        size: 12
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Inter', sans-serif",
-                            size: 12
-                        }
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        borderDash: [2, 4]
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Inter', sans-serif",
-                            size: 12
-                        }
-                    }
-                }
-            },
-            animation: {
-                delay: (context) => context.dataIndex * 100,
-                duration: 1000,
-                easing: 'easeOutQuart'
+        
+        // Filter alerts
+        function filterAlerts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const severityValue = severityFilter.value;
+            
+            // Reset to first page when filtering
+            currentPage = 1;
+            
+            return filteredAlerts.filter(alert => {
+                // Check if matches search term
+                const matchesSearch = 
+                    alert.alert_id.toLowerCase().includes(searchTerm) ||
+                    alert.employee.name.toLowerCase().includes(searchTerm) ||
+                    alert.employee.department.toLowerCase().includes(searchTerm) ||
+                    alert.activity.type.toLowerCase().includes(searchTerm);
+                
+                // Check if matches severity filter
+                const matchesSeverity = severityValue === 'all' || alert.severity === severityValue;
+                
+                return matchesSearch && matchesSeverity;
+            });
+        }
+        
+        // Render alerts with pagination
+        function renderAlerts() {
+            const filtered = filterAlerts();
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageAlerts = filtered.slice(startIndex, endIndex);
+            
+            // Update pagination info
+            paginationInfo.textContent = `Showing ${filtered.length > 0 ? startIndex + 1 : 0}-${Math.min(endIndex, filtered.length)} of ${filtered.length} alerts`;
+            
+            // Enable/disable pagination buttons
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = endIndex >= filtered.length;
+            
+            // Clear table
+            alertsTableBody.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                alertsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                            <p>No alerts found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
             }
+            
+            // Add rows
+            pageAlerts.forEach(alert => {
+                let severityColorClass = '';
+                let statusColorClass = '';
+                
+                // Determine severity color
+                switch (alert.severity) {
+                    case 'Critical':
+                        severityColorClass = 'bg-red-500';
+                        break;
+                    case 'High':
+                        severityColorClass = 'bg-orange-500';
+                        break;
+                    case 'Medium':
+                        severityColorClass = 'bg-yellow-500';
+                        break;
+                    case 'Low':
+                        severityColorClass = 'bg-green-500';
+                        break;
+                }
+                
+                // Determine status color
+                switch (alert.status) {
+                    case 'Active':
+                        statusColorClass = 'bg-red-100 text-red-800';
+                        break;
+                    case 'Investigation':
+                        statusColorClass = 'bg-orange-100 text-orange-800';
+                        break;
+                    case 'Cleared':
+                        statusColorClass = 'bg-green-100 text-green-800';
+                        break;
+                }
+                
+                // Helper function to escape strings for HTML insertion
+                function escapeHtml(str) {
+                    if (!str) return '';
+                    return str.toString()
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
+                
+                // Safely escape values for the modal opening function
+                const safeAlertId = escapeHtml(alert.alert_id);
+                const safeEmpName = escapeHtml(alert.employee.name);
+                const safeEmpDept = escapeHtml(alert.employee.department);
+                const safeActivityDesc = escapeHtml(alert.activity.description);
+                const safeActivityTime = escapeHtml(alert.activity.time);
+                const safeActivityLocation = escapeHtml(alert.activity.location);
+                const safeSeverity = escapeHtml(alert.severity);
+                const safeActivityDetails = escapeHtml(alert.activity.details);
+                
+                // Prepare AI analysis data
+                const safeAnalysis = escapeHtml(alert.analysis || "");
+                
+                // Get recommendations array safely
+                let recommendationsArray = [];
+                if (alert.recommended_actions && Array.isArray(alert.recommended_actions)) {
+                    recommendationsArray = alert.recommended_actions.map(rec => escapeHtml(rec));
+                }
+                
+                // Store the recommendations data in a data attribute instead of trying to pass it directly to the function
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-red-50 transition-colors duration-150';
+                row.dataset.recommendations = JSON.stringify(recommendationsArray);
+                row.dataset.analysis = safeAnalysis;
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${escapeHtml(alert.alert_id)}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                <span class="font-medium text-red-600">${escapeHtml(alert.employee.initials)}</span>
+                            </div>
+                            ${escapeHtml(alert.employee.name)}
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(alert.employee.department)}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            ${escapeHtml(alert.activity.type)}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(alert.activity.time)}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(alert.activity.location)}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center">
+                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                <div class="${severityColorClass} h-2 rounded-full" style="width: ${alert.risk_score}%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-600">${escapeHtml(alert.severity)}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColorClass}">
+                            ${alert.status === 'Active' ? '⚠ ' : ''}${escapeHtml(alert.status)}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button onclick="openModalFromRow(this.closest('tr'), '${safeAlertId}', '${safeEmpName}', '${safeEmpDept}', '${safeActivityDesc}', '${safeActivityTime}', '${safeActivityLocation}', '${safeSeverity}', '${safeActivityDetails}')" 
+                                class="inline-flex items-center px-3 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-150">
+                            <span class="font-medium text-sm">Investigate</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                
+                alertsTableBody.appendChild(row);
+            });
         }
-    });
-
-    // Add chart interactions
-    document.getElementById('riskChart').addEventListener('mousemove', (event) => {
-        const activePoints = riskChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
-        document.getElementById('riskChart').style.cursor = activePoints.length ? 'pointer' : 'default';
-    });
-
-    document.getElementById('recipientChart').addEventListener('mousemove', (event) => {
-        const activePoints = recipientChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
-        document.getElementById('recipientChart').style.cursor = activePoints.length ? 'pointer' : 'default';
+        
+        // Set up event listeners for pagination
+        prevPageBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderAlerts();
+            }
+        });
+        
+        nextPageBtn.addEventListener('click', function() {
+            const filtered = filterAlerts();
+            const maxPage = Math.ceil(filtered.length / itemsPerPage);
+            
+            if (currentPage < maxPage) {
+                currentPage++;
+                renderAlerts();
+            }
+        });
+        
+        // Set up event listeners for filtering
+        searchInput.addEventListener('input', function() {
+            renderAlerts();
+        });
+        
+        severityFilter.addEventListener('change', function() {
+            renderAlerts();
+        });
     });
 </script>
 
-<!-- Transaction Modal -->
-    <div id="transactionModal" class="fixed inset-0 flex items-center justify-center modal-backdrop opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full mx-4 relative">
+<!-- Alert Modal -->
+<div id="transactionModal" class="fixed inset-0 flex items-center justify-center modal-backdrop opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="modal-content bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full mx-4 relative">
         <!-- Header -->
         <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Transaction Details</h2>
-                <p class="text-sm text-gray-500 mt-1">Transaction ID: <span id="modalTxId" class="font-medium"></span></p>
+                <h2 class="text-2xl font-bold text-gray-900">Alert Details</h2>
+                <p class="text-sm text-gray-500 mt-1">Alert ID: <span id="modalTxId" class="font-medium"></span></p>
             </div>
             <button class="p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="closeModal()">
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
@@ -552,68 +465,52 @@
             <div class="bg-gray-50 p-4 rounded-lg">
                 <h3 class="text-sm font-medium text-gray-500 mb-4">Employee Information</h3>
                 <div class="flex items-center mb-4">
-                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                        <span id="modalEmpInitials" class="text-blue-600 font-medium"></span>
+                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                        <span id="modalEmpInitials" class="text-red-600 font-medium"></span>
                     </div>
                     <div>
                         <p id="modalEmpId" class="font-medium text-gray-900"></p>
-                        <p id="modalEmpAcc" class="text-sm text-gray-500"></p>
+                        <p id="modalEmpDept" class="text-sm text-gray-500"></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Recipient Details -->
+            <!-- Activity Details -->
             <div class="bg-gray-50 p-4 rounded-lg">
-                <h3 class="text-sm font-medium text-gray-500 mb-4">Recipient Information</h3>
-                <div class="flex items-center mb-4">
-                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                        <span id="modalRecInitial" class="text-red-600 font-medium">R</span>
-                    </div>
-                    <div></div>
-                        <p id="modalRecType" class="font-medium text-gray-900"></p>
-                        <p id="modalRecAcc" class="text-sm text-gray-500"></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Transaction Details -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <h3 class="text-sm font-medium text-gray-500 mb-4">Transaction Information</h3>
+                <h3 class="text-sm font-medium text-gray-500 mb-4">Activity Information</h3>
                 <div class="space-y-2">
                     <div class="flex justify-between">
-                        <span class="text-gray-500">Amount:</span>
-                        <span id="modalAmount" class="font-bold text-gray-900"></span>
-                    </div>
-                    <div class="flex justify-between">
                         <span class="text-gray-500">Type:</span>
-                        <span id="modalTxType" class="text-gray-900"></span>
+                        <span id="modalActivityType" class="text-gray-900"></span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-500">Date:</span>
-                        <span id="modalDate" class="text-gray-900"></span>
+                        <span class="text-gray-500">Time:</span>
+                        <span id="modalTime" class="text-gray-900"></span>
                     </div>
-                </div>
-            </div>
-
-            <!-- Risk Assessment -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <h3 class="text-sm font-medium text-gray-500 mb-4">Risk Assessment</h3>
-                <div class="mb-2">
-                    <div class="flex justify-between mb-1">
-                        <span class="text-sm font-medium text-gray-700">Risk Score</span>
-                        <span id="riskScore" class="text-sm font-medium text-red-600">95/100</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div id="riskBar" class="bg-red-600 h-2.5 rounded-full"></div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Location:</span>
+                        <span id="modalLocation" class="text-gray-900"></span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Narration -->
-        <div class="mb-6"></div>
-            <h3 class="text-sm font-medium text-gray-500 mb-2">Transaction Narration</h3>
+        <!-- Alert Description -->
+        <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Alert Description</h3>
             <p id="modalNarration" class="text-gray-700 bg-gray-50 p-4 rounded-lg"></p>
+        </div>
+        
+        <!-- AI Analysis -->
+        <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">AI Analysis</h3>
+            <p id="modalAnalysis" class="text-gray-700 bg-blue-50 p-4 rounded-lg"></p>
+        </div>
+        
+        <!-- Recommended Actions -->
+        <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Recommended Actions</h3>
+            <ul id="modalRecommendations" class="list-disc pl-5 text-gray-700 bg-green-50 p-4 rounded-lg"></ul>
         </div>
 
         <!-- Warning Banner -->
@@ -622,8 +519,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
             <div>
-                <p class="font-medium text-red-800">High Risk Transaction Detected</p>
-                <p class="text-sm text-red-700 mt-1">This transaction has been flagged for compliance review due to suspicious patterns.</p>
+                <p class="font-medium text-red-800">Critical Security Alert</p>
+                <p class="text-sm text-red-700 mt-1">This activity has been flagged as a potential insider threat.</p>
             </div>
         </div>
 
@@ -633,36 +530,57 @@
                 Close
             </button>
             <button class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                Mark for Review
+                Escalate Alert
             </button>
         </div>
     </div>
 </div>
 
 <script>
-    function openModal(txId, empId, empAcc, recAcc, recType, amount, txType, date, narration, risk) {
-        // Update all modal content
-        document.getElementById('modalTxId').textContent = txId;
-        document.getElementById('modalEmpId').textContent = empId;
-        document.getElementById('modalEmpAcc').textContent = empAcc;
-        document.getElementById('modalRecAcc').textContent = recAcc;
-        document.getElementById('modalRecType').textContent = recType;
-        document.getElementById('modalAmount').textContent = amount;
-        document.getElementById('modalTxType').textContent = txType;
-        document.getElementById('modalDate').textContent = date;
-        document.getElementById('modalNarration').textContent = narration;
-        document.getElementById('riskBar').style.width = risk + "%";
-        document.getElementById('riskScore').textContent = `${risk}/100`;
+    function openModalFromRow(row, alertId, empName, empDept, activityType, time, location, severity, description) {
+        // Debug
+        console.log("Opening modal for:", alertId);
+        console.log("Analysis:", row.dataset.analysis);
+        console.log("Recommendations:", row.dataset.recommendations);
+        
+        // Update modal content
+        document.getElementById('modalTxId').textContent = alertId;
+        document.getElementById('modalEmpId').textContent = empName;
+        document.getElementById('modalEmpDept').textContent = empDept;
+        document.getElementById('modalActivityType').textContent = activityType;
+        document.getElementById('modalTime').textContent = time;
+        document.getElementById('modalLocation').textContent = location;
+        document.getElementById('modalNarration').textContent = description;
+        
+        // Add AI analysis content
+        const analysis = row.dataset.analysis;
+        document.getElementById('modalAnalysis').textContent = analysis || "No AI analysis available";
+        
+        // Add recommendations
+        const recommendations = JSON.parse(row.dataset.recommendations);
+        const recommendationsElement = document.getElementById('modalRecommendations');
+        recommendationsElement.innerHTML = '';
+        
+        if (recommendations && Array.isArray(recommendations) && recommendations.length > 0) {
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                li.className = 'mb-1';
+                recommendationsElement.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.textContent = "No recommended actions available";
+            recommendationsElement.appendChild(li);
+        }
         
         // Set employee initials
-        document.getElementById('modalEmpInitials').textContent = empId.substring(0, 2);
+        document.getElementById('modalEmpInitials').textContent = empName.split(' ').map(n => n[0]).join('');
         
         const modal = document.getElementById('transactionModal');
-        // Show modal with animation
         modal.classList.remove('pointer-events-none');
         modal.classList.add('opacity-100');
         
-        // Animate content after slight delay
         setTimeout(() => {
             modal.classList.add('modal-active');
         }, 10);
@@ -675,7 +593,6 @@
         modal.classList.remove('modal-active', 'opacity-100');
         modal.classList.add('pointer-events-none');
         
-        // Remove modal-open class after animation completes
         setTimeout(() => {
             document.body.classList.remove('modal-open');
         }, 300);
@@ -696,7 +613,6 @@
         }
     });
 </script>
-
    
 </body>
 </html>

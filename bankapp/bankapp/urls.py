@@ -22,7 +22,8 @@ from branches.views import (
     fraud_detection, risk_scoring, pattern_analysis, insider_threat,
     reports, mail, crm, compliance_dashboard, customer_experience,
     get_subcategories, get_segmentation_data, customers_page,
-    logout_view, transactions, transaction_chat, risk_assessment_api  # Add risk_assessment_api import
+    logout_view, transactions, transaction_chat, risk_assessment_api,  # Add risk_assessment_api import
+    insider_threat_logs_api  # Import the insider threat logs API
 )
 
 urlpatterns = [
@@ -49,4 +50,5 @@ urlpatterns = [
     path('transactions/', transactions, name='transactions'),  # Add URL pattern for transactions
     path('transaction_chat/', transaction_chat, name='transaction_chat'),  # Add URL pattern for transaction chat
     path('api/risk-assessment/', risk_assessment_api, name='risk_assessment_api'),  # Add URL pattern for risk assessment API
+    path('api/insider-threat/logs/', insider_threat_logs_api, name='insider_threat_logs_api'),  # Add URL pattern for insider threat logs API
 ]

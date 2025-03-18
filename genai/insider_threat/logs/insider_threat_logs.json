@@ -1,0 +1,192 @@
+[
+    {
+        "alert_id": "A980685",
+        "employee": {
+            "name": "John Doe",
+            "department": "IT Security",
+            "initials": "JD"
+        },
+        "activity": {
+            "type": "Unauthorized Access",
+            "description": "Unauthorized database access attempt",
+            "time": "23:45:12",
+            "location": "Remote IP: 192.168.1.100",
+            "details": "Multiple failed login attempts detected outside normal working hours"
+        },
+        "severity": "Critical",
+        "status": "Active",
+        "risk_score": 95,
+        "timestamp": "2023-03-17T23:45:12Z"
+    },
+    {
+        "alert_id": "A980686",
+        "employee": {
+            "name": "Jane Smith",
+            "department": "Finance",
+            "initials": "JS"
+        },
+        "activity": {
+            "type": "Data Exfiltration",
+            "description": "Unusual file download activity",
+            "time": "14:32:56",
+            "location": "Workstation: FIN-WS-423",
+            "details": "Downloaded 450MB of customer financial records to external drive"
+        },
+        "severity": "High",
+        "status": "Active",
+        "risk_score": 85,
+        "timestamp": "2023-03-17T14:32:56Z"
+    },
+    {
+        "alert_id": "A980687",
+        "employee": {
+            "name": "Robert Johnson",
+            "department": "Customer Service",
+            "initials": "RJ"
+        },
+        "activity": {
+            "type": "Privilege Escalation",
+            "description": "Attempted to escalate user privileges",
+            "time": "11:23:47",
+            "location": "Workstation: CS-WS-109",
+            "details": "Multiple failed attempts to gain administrator access"
+        },
+        "severity": "Medium",
+        "status": "Investigation",
+        "risk_score": 65,
+        "timestamp": "2023-03-17T11:23:47Z"
+    },
+    {
+        "alert_id": "A980688",
+        "employee": {
+            "name": "Michael Chen",
+            "department": "IT Security",
+            "initials": "MC"
+        },
+        "activity": {
+            "type": "After Hours Access",
+            "description": "System accessed outside working hours",
+            "time": "02:14:35",
+            "location": "Remote IP: 209.85.218.123",
+            "details": "Accessed sensitive customer database at unusual hours"
+        },
+        "severity": "Medium",
+        "status": "Active",
+        "risk_score": 60,
+        "timestamp": "2023-03-18T02:14:35Z"
+    },
+    {
+        "alert_id": "A980689",
+        "employee": {
+            "name": "Sarah Williams",
+            "department": "Human Resources",
+            "initials": "SW"
+        },
+        "activity": {
+            "type": "Unauthorized File Access",
+            "description": "Accessed salary information outside scope",
+            "time": "10:45:22",
+            "location": "Workstation: HR-WS-012",
+            "details": "Accessed executive compensation files without authorization"
+        },
+        "severity": "High",
+        "status": "Active",
+        "risk_score": 80,
+        "timestamp": "2023-03-16T10:45:22Z"
+    },
+    {
+        "alert_id": "L564321",
+        "employee": {
+            "name": "David Thompson",
+            "department": "IT Support",
+            "initials": "DT"
+        },
+        "activity": {
+            "type": "System Maintenance",
+            "description": "Routine server maintenance",
+            "time": "15:30:45",
+            "location": "Server Room",
+            "details": "Scheduled database optimization procedure"
+        },
+        "severity": "Low",
+        "status": "Cleared",
+        "risk_score": 10,
+        "timestamp": "2023-03-17T15:30:45Z"
+    },
+    {
+        "alert_id": "L564322",
+        "employee": {
+            "name": "Lisa Johnson",
+            "department": "Finance",
+            "initials": "LJ"
+        },
+        "activity": {
+            "type": "Financial Report Access",
+            "description": "Quarterly report generation",
+            "time": "09:15:33",
+            "location": "Workstation: FIN-WS-102",
+            "details": "Accessed financial databases for quarterly reporting"
+        },
+        "severity": "Low",
+        "status": "Cleared",
+        "risk_score": 5,
+        "timestamp": "2023-03-17T09:15:33Z"
+    },
+    {
+        "alert_id": "A980690",
+        "employee": {
+            "name": "Thomas Lee",
+            "department": "Product Development",
+            "initials": "TL"
+        },
+        "activity": {
+            "type": "Source Code Extraction",
+            "description": "Unusual repository activity",
+            "time": "16:42:18",
+            "location": "Workstation: DEV-WS-078",
+            "details": "Downloaded complete codebase to personal device, bypassing security protocols"
+        },
+        "severity": "Critical",
+        "status": "Active",
+        "risk_score": 90,
+        "timestamp": "2023-03-17T16:42:18Z"
+    },
+    {
+        "alert_id": "L564323",
+        "employee": {
+            "name": "Amanda Garcia",
+            "department": "Customer Support",
+            "initials": "AG"
+        },
+        "activity": {
+            "type": "Customer Data Access",
+            "description": "Support ticket resolution",
+            "time": "13:25:40",
+            "location": "Workstation: CS-WS-045",
+            "details": "Accessed customer account to resolve support ticket #45872"
+        },
+        "severity": "Low",
+        "status": "Cleared",
+        "risk_score": 5,
+        "timestamp": "2023-03-17T13:25:40Z"
+    },
+    {
+        "alert_id": "A980691",
+        "employee": {
+            "name": "Eric Wilson",
+            "department": "IT Administration",
+            "initials": "EW"
+        },
+        "activity": {
+            "type": "Configuration Change",
+            "description": "Firewall rule modification",
+            "time": "21:38:55",
+            "location": "Remote IP: 192.168.1.245",
+            "details": "Modified firewall rules to allow unauthorized external access"
+        },
+        "severity": "Critical",
+        "status": "Investigation",
+        "risk_score": 95,
+        "timestamp": "2023-03-17T21:38:55Z"
+    }
+] 
