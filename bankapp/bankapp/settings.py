@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'vercel.app',
-    # ...other allowed hosts...
+    'onrender.com',
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
