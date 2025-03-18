@@ -1,10 +1,42 @@
-Django==5.1.6
-mysqlclient==2.2.7
-pytz==2023.3
-sqlparse==0.4.4
-pandas==2.2.2
-python-dotenv==1.0.1
-google-generativeai==0.4.0
-numpy==1.26.4
-requests==2.31.0
-protobuf==4.25.3
+# Web Framework
+Django
+djangorestframework
+gunicorn
+asgiref
+sqlparse
+
+# Database
+mysqlclient
+
+# Environment Variables
+python-dotenv
+
+# HTTP/API
+requests
+urllib3
+certifi
+charset-normalizer
+idna
+
+# AWS Integration (if needed)
+boto3
+botocore
+s3transfer
+jmespath
+
+# AI/ML (if using these features)
+langchain-core
+langchain-groq
+langsmith
+groq
+mistralai
+pydantic
+pydantic_core
+typing_extensions
+
+# Utilities
+numpy
+pandas
+python-dateutil
+pytz
+tzdata
