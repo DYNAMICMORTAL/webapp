@@ -171,7 +171,7 @@ def reports(request):
     return render(request, 'reports.html')
 
 def mail(request):
-    return render(request, 'mail.html')
+    return render(request, 'mail.html', {"segment_types": SEGMENTATION_QUERIES})
 
 def crm(request):
     user_role = request.session.get('user_role')

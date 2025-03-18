@@ -120,16 +120,23 @@ class CreditCard(models.Model):
     def __str__(self):
         return f"{self.card_type} - {self.customer.FirstName} {self.customer.LastName}"
 
-# ──────────────────────────────── Recent Transactions (Last 7 Days) ────────────────────────────────
-# class RecentTransaction(models.Model):
-#     transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, primary_key=True)
-    
-#     def __str__(self):
-#         return f"Recent: {self.transaction.transaction_id}"
+class EmployeeLog(models.Model):
+    log_id = models.AutoField(primary_key=True)
+    timestamp = models.DateTimeField()
+    employee_id = models.CharField(max_length=10)
+    role = models.CharField(max_length=50)
+    ip_address = models.GenericIPAddressField()
+    accessed_module = models.CharField(max_length=100)
+    action = models.CharField(max_length=100)
+    access_duration = models.IntegerField()
+    affected_customer = models.CharField(max_length=50, blank=True, null=True)
+    data_extracted = models.TextField(blank=True, null=True)
+    transaction_details = models.TextField(blank=True, null=True)
+    device = models.CharField(max_length=50)
+    location = models.CharField(max_length=100)
+    notes = models.TextField()
+    risk_score = models.IntegerField()
+    risk_level = models.CharField(max_length=50)
 
-# ──────────────────────────────── Lookback Transactions (Up to 360 Days) ────────────────────────────────
-# class LookbackTransaction(models.Model):
-#     transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, primary_key=True)
-
-#     def __str__(self):
-#         return f"Lookback: {self.transaction.transaction_id}"
+    def __str__(self):
+        return f"{self.employee_id} - {self.risk_level}"

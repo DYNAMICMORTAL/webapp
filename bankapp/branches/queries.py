@@ -13,7 +13,8 @@ AGE_GROUP_QUERY = """
         AVG(a.Balance) AS AvgBalance,
         SUM(a.Balance) AS TotalBalance,
         COUNT(DISTINCT l.LoanID) AS TotalLoans,
-        COUNT(DISTINCT cc.CardID) AS TotalCreditCards
+        COUNT(DISTINCT cc.CardID) AS TotalCreditCards,
+        GROUP_CONCAT(c.CustomerID) AS CustomerIDs
     FROM 
         Customers c
     LEFT JOIN 
