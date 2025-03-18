@@ -39,16 +39,15 @@ ALLOWED_HOSTS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Change to your SMTP provider
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mihiramin2004@gmail.com'  # Change this
-EMAIL_HOST_PASSWORD = 'dynamoisgreat'  # Use an App Password for security
+EMAIL_HOST_USER = 'mihiramin2004@gmail.com'
+EMAIL_HOST_PASSWORD = 'dynamoisgreat'
 DEFAULT_FROM_EMAIL = 'alerts@bank.com'
 
 
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -142,7 +141,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'django.db.backends': {  # Log database queries
+        'django.db.backends': {  
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
