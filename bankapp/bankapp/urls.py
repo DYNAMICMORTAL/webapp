@@ -28,11 +28,11 @@ from branches.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('customers/', include('customers.urls')),
-    path('', branch_login, name='home'),  # Set branch input page as home
-    path('employee_login/', employee_login, name='employee_login'),  # Add URL pattern for employee login
-    path('compliance_login/', compliance_login, name='compliance_login'),  # Add URL pattern for compliance login
-    path('dashboard/', dashboard, name='dashboard'),  # Add URL pattern for dashboard
+    # path('customers/', include('customers.urls')),
+    # path('', branch_login, name='home'),  # Set branch input page as home
+    # path('employee_login/', employee_login, name='employee_login'),  # Add URL pattern for employee login
+    # path('compliance_login/', compliance_login, name='compliance_login'),  # Add URL pattern for compliance login
+    path('', dashboard, name='dashboard'),  # Add URL pattern for dashboard
     path('fraud_detection/', fraud_detection, name='fraud_detection'),  # Add URL pattern for fraud detection
     path('risk_scoring/', risk_scoring, name='risk_scoring'),  # Add URL pattern for risk scoring
     path('pattern_analysis/', pattern_analysis, name='pattern_analysis'),  # Add URL pattern for pattern analysis
